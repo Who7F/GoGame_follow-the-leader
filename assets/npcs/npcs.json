@@ -1,0 +1,14 @@
+[
+  {
+    "x": 100,
+    "y": 150,
+    "followsLast": true,
+    "imagePath": "assets/images/npcs.png"
+  },
+  {
+    "x": 200,
+    "y": 250,
+    "followsLast": false,
+    "imagePath": "assets/images/npcs.png"
+  }
+]
