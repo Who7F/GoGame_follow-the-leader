@@ -14,7 +14,7 @@ type Tileset struct{
 func LoadTileset(imagePath string, tileWidth, tileHeight int)(*Tileset, error){
 	img, _, err := ebitenutil.NewImageFromFile(imagePath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load  tileset image: %v", err)
+		return nil, fmt.Errorf("failed to load tileset image: %v", err)
 	}
 	
 	tileset := &Tileset{

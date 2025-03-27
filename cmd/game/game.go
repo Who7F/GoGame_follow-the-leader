@@ -14,7 +14,8 @@ type Game struct {
 	Player *entities.Player
 	NPCs   []*entities.Npc
 	Rums   []*entities.Rum
-	//TilemapJSON *entities.TilemapJSON
+	Tilemap *entities.TilemapJSON
+	Tileset *entities.Tileset
 }
 
 // New initializes the game
@@ -31,16 +32,22 @@ func New() (*Game, error) {
 	
 	rums := entities.NewRums()
 	
-	//tilemapJSON, err := entities.TilemapJSON("assets/maps/tilesset/test.json")
-	//if err != nil {
-	//	log.Fatal(err) 
-	//}
+	tilemap, err := entities.NewTilemapJSON("assets/maps/tilesset/test.json")
+	if err != nil {
+		log.Fatal(err) 
+	}
+	
+	tileset, err := entities.LoadTileset("assets/maps/tilesset/test.png", 16, 16)
+	if err != nil {
+		log.Fatal(err) 
+	}
 
 	return &Game{
 		Player: player,
 		NPCs:   npcs,
 		Rums:   rums,
-		//TilemapJSON: tilemapJSON,
+		Tilemap: tilemap,
+		Tileset: tileset,
 	}, nil
 }
 
@@ -59,7 +66,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0xff, 0, 0xff, 0xff})
 	
-	//g.TilemapJSON.Draw(screen)
+	g.Tilemap.Draw(screen, g.Tileset)
 	
 	ebitenutil.DebugPrint(screen, "Constitution Build!")
 
