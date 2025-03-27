@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"fmt"
 )
 
 // Rum struct
@@ -11,13 +11,31 @@ type Rum struct {
 }
 
 // NewRums initializes Rum bottles
-func NewRums() []*Rum {
-	img, _, err := ebitenutil.NewImageFromFile("assets/images/rum.png")
+func NewRums(jsonFile string) ([]*Rum, error) {
+	rumData, err := LoadRums(jsonFile)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return []*Rum{
-		{Sprite: &Sprite{Img: img, X: 100, Y: 100}, GiveDrunk: 10},
+	rums := []*Rum{}
+
+	for _, data := range rumData {
+		img, err := LoadImage(data.ImagePath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load Rum image: %v", err)
+		}
+
+		rum := &Rum{
+			Sprite: &Sprite{
+				Img: img,
+				X:   data.X,
+				Y:   data.Y,
+			},
+			GiveDrunk: data.GiveDrunk,
+		}
+		rums = append(rums, rum)
 	}
+
+	return rums, nil
+
 }

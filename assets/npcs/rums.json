@@ -1,0 +1,20 @@
+[
+  {
+    "x": 100,
+    "y": 150,
+    "GiveDrunk": 10,
+    "imagePath": "assets/images/rum.png"
+  },
+  {
+    "x": 200,
+    "y": 350,
+    "GiveDrunk": 10,
+    "imagePath": "assets/images/rum.png"
+  },
+  {
+    "x": 150,
+    "y": 350,
+    "GiveDrunk": 10,
+    "imagePath": "assets/images/rum.png"
+  }
+]

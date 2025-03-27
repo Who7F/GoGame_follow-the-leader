@@ -19,23 +19,25 @@ func NewPlayer(x, y float64) (*Player, error) {
 	}
 
 	return &Player{
-		Sprite: &Sprite{Img: img, X: x, Y: y},
+		Sprite:  &Sprite{Img: img, X: x, Y: y},
 		IsDrunk: 0,
 	}, nil
 }
 
 // Update handles movement
 func (p *Player) Update() {
+	const playerSpeed float64 = 1
+
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		p.X += 0.5
+		p.X += playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		p.X -= 0.5
+		p.X -= playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		p.Y -= 0.5
+		p.Y -= playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		p.Y += 0.5
+		p.Y += playerSpeed
 	}
 }
