@@ -4,7 +4,7 @@
 
 ** About: I dont know yet. Lets see where it takes us
 
-** Game Engine: Ebitengine 
+** Game Engine: Ebitengine https://ebitengine.org
 
 ** Assets Pack: https://pixel-boy.itch.io/ninja-adventure-asset-pack
 

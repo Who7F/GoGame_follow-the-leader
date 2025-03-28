@@ -1,11 +1,13 @@
 package game
 
 import (
+	"fmt"
 	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
+	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
 	"follow-the-leader/cmd/entities"
 )
@@ -26,12 +28,12 @@ func New() (*Game, error) {
 		return nil, err
 	}
 
-	npcs, err := entities.NewNPCs("assets/npcs/npcs.json")
+	npcs, err := entities.NewNPCs("assets/entityData/npcs.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	rums, err := entities.NewRums("assets/npcs/rums.json")
+	rums, err := entities.NewRums("assets/entityData/rums.json")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,6 +63,12 @@ func (g *Game) Update() error {
 
 	for _, npc := range g.NPCs {
 		npc.Update(g.Player.X, g.Player.Y)
+	}
+
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		targetX, targetY := ebiten.CursorPosition()
+		// To call movemnet func
+		fmt.Printf("x: %d y: %d", targetX, targetY)
 	}
 
 	return nil

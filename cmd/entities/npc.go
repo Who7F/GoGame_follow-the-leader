@@ -55,4 +55,5 @@ func (n *Npc) Update(playerX, playerY float64) {
 			n.FollowsLast = true
 		}
 	}
+
 }

@@ -10,6 +10,19 @@ type Rum struct {
 	GiveDrunk uint
 }
 
+// Json model
+type RumData struct {
+	X         float64 `json:"x"`
+	Y         float64 `json:"y"`
+	GiveDrunk uint    `json:"GiveDrunk"`
+	ImagePath string  `json:"imagePath"`
+}
+
+// Calls loadfuncs
+func LoadRums(jsonFile string) ([]RumData, error) {
+	return LoadJSON[RumData](jsonFile, "Rum")
+}
+
 // NewRums initializes Rum bottles
 func NewRums(jsonFile string) ([]*Rum, error) {
 	rumData, err := LoadRums(jsonFile)
@@ -35,7 +48,5 @@ func NewRums(jsonFile string) ([]*Rum, error) {
 		}
 		rums = append(rums, rum)
 	}
-
 	return rums, nil
-
 }

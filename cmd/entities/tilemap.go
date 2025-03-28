@@ -2,15 +2,16 @@ package entities
 
 import (
 	"encoding/json"
-	"os"
 	"image"
+	"os"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type TilemapLayerJSON struct {
-	Data []int `json:"data"`
-	Width int `json:"width"`
-	Height int `json:"height"`
+	Data   []int `json:"data"`
+	Width  int   `json:"width"`
+	Height int   `json:"height"`
 }
 
 type TilemapJSON struct {
@@ -22,13 +23,13 @@ func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	tilemapJSON := TilemapJSON{}
 	err = json.Unmarshal(contents, &tilemapJSON)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return &tilemapJSON, nil
 }
 
@@ -37,10 +38,11 @@ func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset) {
 	for _, layer := range t.Tiles {
 		for y := 0; y < layer.Height; y++ {
 			for x := 0; x < layer.Width; x++ {
-				tileIndex := layer.Data[y*layer.Width + x]
-				
-				// Skip empty tiles (if 0 means empty)
-				if tileIndex == 0 {
+				//tileIndex := layer.Data[y*layer.Width + x]
+				tileIndex := layer.Data[y*layer.Width+x] - 1 // Adjust for 1-based indexing
+
+				// Skip empty tiles (if -1 means empty)
+				if tileIndex == -1 {
 					continue
 				}
 
