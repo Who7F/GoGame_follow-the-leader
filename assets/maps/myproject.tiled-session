@@ -5,8 +5,8 @@
     },
     "activeFile": "tilesset/test.json",
     "expandedProjectPaths": [
-        ".",
-        "tilesset"
+        "tilesset",
+        "."
     ],
     "fileStates": {
         "tilesset/TilesetFloor.tsx": {
@@ -16,8 +16,8 @@
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 124,
-                "y": 115.75
+                "x": 312.5,
+                "y": 491
             }
         }
     },

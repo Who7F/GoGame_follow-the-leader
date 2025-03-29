@@ -2,14 +2,14 @@ package game
 
 import (
 	"fmt"
+	"follow-the-leader/cmd/camera"
+	"follow-the-leader/cmd/entities"
 	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-
-	"follow-the-leader/cmd/entities"
 )
 
 // Game struct holds all entities
@@ -19,6 +19,7 @@ type Game struct {
 	Rums    []*entities.Rum
 	Tilemap *entities.TilemapJSON
 	Tileset *entities.Tileset
+	Cam     *camera.Camera
 }
 
 // New initializes the game
@@ -48,12 +49,15 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
+	camera := camera.NewCamera(0, 0)
+
 	return &Game{
 		Player:  player,
 		NPCs:    npcs,
 		Rums:    rums,
 		Tilemap: tilemap,
 		Tileset: tileset,
+		Cam:     camera,
 	}, nil
 }
 
@@ -70,6 +74,9 @@ func (g *Game) Update() error {
 		// To call movemnet func
 		fmt.Printf("x: %d y: %d", targetX, targetY)
 	}
+	camX, camY := 320.0, 240.0
+
+	g.Cam.FollowTarget(g.Player.X, g.Player.Y, camX, camY)
 
 	return nil
 }
@@ -78,18 +85,18 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0xff, 0, 0xff, 0xff})
 
-	g.Tilemap.Draw(screen, g.Tileset)
+	g.Tilemap.Draw(screen, g.Tileset, g.Cam)
 
 	ebitenutil.DebugPrint(screen, "Constitution Build!")
 
 	for _, npc := range g.NPCs {
-		npc.Draw(screen)
+		npc.Draw(screen, g.Cam)
 	}
 	for _, rum := range g.Rums {
-		rum.Draw(screen)
+		rum.Draw(screen, g.Cam)
 	}
 
-	g.Player.Draw(screen)
+	g.Player.Draw(screen, g.Cam)
 }
 
 // Layout sets the screen size

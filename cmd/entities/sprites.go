@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"follow-the-leader/cmd/camera"
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -13,9 +14,9 @@ type Sprite struct {
 	X, Y float64
 }
 
-func (s *Sprite) Draw(screen *ebiten.Image) {
+func (s *Sprite) Draw(screen *ebiten.Image, camcam *camera.Camera) {
 	opts := &ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(s.X, s.Y)
+	opts.GeoM.Translate(s.X+camcam.X, s.Y+camcam.Y)
 
 	screen.DrawImage(s.Img.SubImage(image.Rect(0, 0, 16, 16)).(*ebiten.Image), opts)
 }

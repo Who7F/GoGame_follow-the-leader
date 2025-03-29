@@ -2,6 +2,7 @@ package entities
 
 import (
 	"encoding/json"
+	"follow-the-leader/cmd/camera"
 	"image"
 	"os"
 
@@ -34,7 +35,7 @@ func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
 }
 
 // Draw the tilemap using the tileset
-func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset) {
+func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset, camcam *camera.Camera) {
 	for _, layer := range t.Tiles {
 		for y := 0; y < layer.Height; y++ {
 			for x := 0; x < layer.Width; x++ {
@@ -55,7 +56,7 @@ func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset) {
 
 				// Create draw options
 				opts := &ebiten.DrawImageOptions{}
-				opts.GeoM.Translate(float64(x*tileset.TileWidth), float64(y*tileset.TileHeight))
+				opts.GeoM.Translate(float64(x*tileset.TileWidth)+camcam.X, float64(y*tileset.TileHeight)+camcam.Y)
 
 				// Draw the tile
 				screen.DrawImage(tileset.Image.SubImage(tileRect).(*ebiten.Image), opts)
