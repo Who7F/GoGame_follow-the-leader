@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"follow-the-leader/cmd/camera"
 	"follow-the-leader/cmd/entities"
+	"follow-the-leader/cmd/maps"
 	"image/color"
 	"log"
 
@@ -17,8 +18,8 @@ type Game struct {
 	Player  *entities.Player
 	NPCs    []*entities.Npc
 	Rums    []*entities.Rum
-	Tilemap *entities.TilemapJSON
-	Tileset *entities.Tileset
+	Tilemap *maps.TilemapJSON
+	Tileset *maps.Tileset
 	Cam     *camera.Camera
 }
 
@@ -39,12 +40,12 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
-	tilemap, err := entities.NewTilemapJSON("assets/maps/tilesset/test.json")
+	tilemap, err := maps.NewTilemapJSON("assets/maps/tilesset/test2.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tileset, err := entities.LoadTileset("assets/maps/tilesset/test.png", 16, 16)
+	tileset, err := maps.LoadTileset("assets/maps/tilesset/test.png", 16, 16)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -74,10 +75,14 @@ func (g *Game) Update() error {
 		// To call movemnet func
 		fmt.Printf("x: %d y: %d", targetX, targetY)
 	}
-	camX, camY := 320.0, 240.0
+	screenWidth, screenHeight := 640.0, 480.0
+	offset := 8.0
 
-	g.Cam.FollowTarget(g.Player.X, g.Player.Y, camX, camY)
+	tilemapWidth := float64(g.Tilemap.Tiles[0].Width) * 16.0
+	tilemapHeight := float64(g.Tilemap.Tiles[0].Height) * 16.0
 
+	g.Cam.FollowTarget(g.Player.X+offset, g.Player.Y+offset, screenWidth, screenHeight)
+	g.Cam.Constrain(tilemapWidth, tilemapHeight, screenWidth, screenHeight)
 	return nil
 }
 

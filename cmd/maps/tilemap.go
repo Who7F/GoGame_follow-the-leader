@@ -1,4 +1,4 @@
-package entities
+package maps
 
 import (
 	"encoding/json"
@@ -10,9 +10,10 @@ import (
 )
 
 type TilemapLayerJSON struct {
-	Data   []int `json:"data"`
-	Width  int   `json:"width"`
-	Height int   `json:"height"`
+	Data   []int  `json:"data"`
+	Width  int    `json:"width"`
+	Height int    `json:"height"`
+	Name   string `json:"name"`
 }
 
 type TilemapJSON struct {

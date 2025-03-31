@@ -3,14 +3,21 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tilesset/test.json",
+    "activeFile": "tilesset/TilesetHouse.json",
     "expandedProjectPaths": [
         "tilesset",
         "."
     ],
     "fileStates": {
+        "tilesset/TilesetFloor.json": {
+            "scaleInEditor": 1
+        },
         "tilesset/TilesetFloor.tsx": {
             "scaleInDock": 1
+        },
+        "tilesset/TilesetHouse.json": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
         },
         "tilesset/test.json": {
             "scale": 2,
@@ -19,8 +26,17 @@
                 "x": 312.5,
                 "y": 491
             }
+        },
+        "tilesset/test2.json": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 99.5,
+                "y": 165.25
+            }
         }
     },
+    "frame.defaultDuration": 20,
     "last.imagePath": "D:/Projects/games/go/follow-the-leader/assets/images",
     "map.height": 80,
     "map.lastUsedFormat": "json",
@@ -28,13 +44,17 @@
     "map.tileWidth": 16,
     "map.width": 100,
     "openFiles": [
-        "tilesset/test.json"
+        "tilesset/test2.json",
+        "tilesset/TilesetHouse.json"
     ],
     "project": "myproject.tiled-project",
     "recentFiles": [
+        "tilesset/TilesetFloor.json",
+        "tilesset/TilesetHouse.json",
+        "tilesset/test2.json",
         "tilesset/test.json"
     ],
-    "tileset.lastUsedFormat": "tsx",
+    "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
         "height": 16,
         "width": 16
