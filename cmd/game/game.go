@@ -50,6 +50,11 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
+	//tilesets, err := maps.LoadTileset("assets/maps/tilesset/test.png", "assets/maps/tilesset/TilesetHouse.png", 16, 16)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
 	camera := camera.NewCamera(0, 0)
 
 	return &Game{

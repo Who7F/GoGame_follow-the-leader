@@ -43,14 +43,15 @@ func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset, camcam *camer
 				//tileIndex := layer.Data[y*layer.Width + x]
 				tileIndex := layer.Data[y*layer.Width+x] - 1 // Adjust for 1-based indexing
 
-				// Skip empty tiles (if -1 means empty)
-				if tileIndex == -1 {
+				// Skip empty tiles
+				if tileIndex < 0 {
 					continue
 				}
 
 				// Get the tile's position in the tileset
-				sx := (tileIndex % (tileset.Image.Bounds().Dx() / tileset.TileWidth)) * tileset.TileWidth
-				sy := (tileIndex / (tileset.Image.Bounds().Dx() / tileset.TileWidth)) * tileset.TileHeight
+				tilesetWidthInTiles := tileset.Image.Bounds().Dx() / tileset.TileWidth
+				sx := (tileIndex % tilesetWidthInTiles) * tileset.TileWidth
+				sy := (tileIndex / tilesetWidthInTiles) * tileset.TileHeight
 
 				// Define the tile rectangle
 				tileRect := image.Rect(sx, sy, sx+tileset.TileWidth, sy+tileset.TileHeight)

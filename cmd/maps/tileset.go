@@ -25,3 +25,22 @@ func LoadTileset(imagePath string, tileWidth, tileHeight int) (*Tileset, error) 
 	}
 	return tileset, nil
 }
+
+func LoadTilesets(imagePaths []string, tileWidth, tileHeight int) ([]*Tileset, error) {
+	tilesets := []*Tileset{}
+
+	for _, path := range imagePaths {
+		img, _, err := ebitenutil.NewImageFromFile(path)
+		if err != nil {
+			return nil, fmt.Errorf("failed to load tileset image: %v", err)
+		}
+		tileset := &Tileset{
+			Image:      img,
+			TileWidth:  tileWidth,
+			TileHeight: tileHeight,
+		}
+		tilesets = append(tilesets, tileset)
+
+	}
+	return tilesets, nil
+}
