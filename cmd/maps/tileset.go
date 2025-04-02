@@ -8,25 +8,22 @@ import (
 )
 
 type Tileset struct {
-	Image                 *ebiten.Image
-	TileWidth, TileHeight int
+	Image *ebiten.Image
 }
 
-func LoadTileset(imagePath string, tileWidth, tileHeight int) (*Tileset, error) {
+func LoadTileset(imagePath string) (*Tileset, error) {
 	img, _, err := ebitenutil.NewImageFromFile(imagePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load tileset image: %v", err)
 	}
 
 	tileset := &Tileset{
-		Image:      img,
-		TileWidth:  tileWidth,
-		TileHeight: tileHeight,
+		Image: img,
 	}
 	return tileset, nil
 }
 
-func LoadTilesets(imagePaths []string, tileWidth, tileHeight int) ([]*Tileset, error) {
+func LoadTilesets(imagePaths []string) ([]*Tileset, error) {
 	tilesets := []*Tileset{}
 
 	for _, path := range imagePaths {
@@ -35,9 +32,7 @@ func LoadTilesets(imagePaths []string, tileWidth, tileHeight int) ([]*Tileset, e
 			return nil, fmt.Errorf("failed to load tileset image: %v", err)
 		}
 		tileset := &Tileset{
-			Image:      img,
-			TileWidth:  tileWidth,
-			TileHeight: tileHeight,
+			Image: img,
 		}
 		tilesets = append(tilesets, tileset)
 

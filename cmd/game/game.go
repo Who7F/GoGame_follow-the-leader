@@ -15,12 +15,13 @@ import (
 
 // Game struct holds all entities
 type Game struct {
-	Player  *entities.Player
-	NPCs    []*entities.Npc
-	Rums    []*entities.Rum
-	Tilemap *maps.TilemapJSON
-	Tileset *maps.Tileset
-	Cam     *camera.Camera
+	Player   *entities.Player
+	NPCs     []*entities.Npc
+	Rums     []*entities.Rum
+	Tilemap  *maps.TilemapJSON
+	Tileset  *maps.Tileset
+	Tilesets []*maps.Tileset
+	Cam      *camera.Camera
 }
 
 // New initializes the game
@@ -45,25 +46,26 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
-	tileset, err := maps.LoadTileset("assets/maps/tilesset/test.png", 16, 16)
+	tileset, err := maps.LoadTileset("assets/maps/tilesset/test.png")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//tilesets, err := maps.LoadTileset("assets/maps/tilesset/test.png", "assets/maps/tilesset/TilesetHouse.png", 16, 16)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	tilesets, err := maps.LoadTilesets([]string{"assets/maps/tilesset/test.png", "assets/maps/tilesset/TilesetHouse.png"})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	camera := camera.NewCamera(0, 0)
 
 	return &Game{
-		Player:  player,
-		NPCs:    npcs,
-		Rums:    rums,
-		Tilemap: tilemap,
-		Tileset: tileset,
-		Cam:     camera,
+		Player:   player,
+		NPCs:     npcs,
+		Rums:     rums,
+		Tilemap:  tilemap,
+		Tileset:  tileset,
+		Tilesets: tilesets,
+		Cam:      camera,
 	}, nil
 }
 
@@ -95,7 +97,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{0xff, 0, 0xff, 0xff})
 
-	g.Tilemap.Draw(screen, g.Tileset, g.Cam)
+	g.Tilemap.Draw(screen, g.Tilesets, g.Cam)
 
 	ebitenutil.DebugPrint(screen, "Constitution Build!")
 

@@ -18,6 +18,8 @@ type TilemapLayerJSON struct {
 
 type TilemapJSON struct {
 	Tiles []TilemapLayerJSON `json:"layers"`
+	//Tileheight int `json: tilewidth`
+	//Tilewidth int `json: tilewidth`
 }
 
 func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
@@ -36,8 +38,10 @@ func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
 }
 
 // Draw the tilemap using the tileset
-func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset, camcam *camera.Camera) {
-	for _, layer := range t.Tiles {
+func (t *TilemapJSON) Draw(screen *ebiten.Image, tilesets []*Tileset, camcam *camera.Camera) {
+	for layerIndex, layer := range t.Tiles {
+
+		tileset := tilesets[layerIndex%len(tilesets)]
 		for y := 0; y < layer.Height; y++ {
 			for x := 0; x < layer.Width; x++ {
 				//tileIndex := layer.Data[y*layer.Width + x]
@@ -49,16 +53,16 @@ func (t *TilemapJSON) Draw(screen *ebiten.Image, tileset *Tileset, camcam *camer
 				}
 
 				// Get the tile's position in the tileset
-				tilesetWidthInTiles := tileset.Image.Bounds().Dx() / tileset.TileWidth
-				sx := (tileIndex % tilesetWidthInTiles) * tileset.TileWidth
-				sy := (tileIndex / tilesetWidthInTiles) * tileset.TileHeight
+				tilesetWidthInTiles := tileset.Image.Bounds().Dx() / 16
+				sx := (tileIndex % tilesetWidthInTiles) * 16
+				sy := (tileIndex / tilesetWidthInTiles) * 16
 
 				// Define the tile rectangle
-				tileRect := image.Rect(sx, sy, sx+tileset.TileWidth, sy+tileset.TileHeight)
+				tileRect := image.Rect(sx, sy, sx+16, sy+16)
 
 				// Create draw options
 				opts := &ebiten.DrawImageOptions{}
-				opts.GeoM.Translate(float64(x*tileset.TileWidth)+camcam.X, float64(y*tileset.TileHeight)+camcam.Y)
+				opts.GeoM.Translate(float64(x*16)+camcam.X, float64(y*16)+camcam.Y)
 
 				// Draw the tile
 				screen.DrawImage(tileset.Image.SubImage(tileRect).(*ebiten.Image), opts)
