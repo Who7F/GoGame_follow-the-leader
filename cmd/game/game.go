@@ -41,17 +41,19 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
-	tilemap, err := maps.NewTilemapJSON("assets/maps/tilesset/test2.json")
+	tilemap, err := maps.NewTilemapJSON("assets/maps/tilesset/startbace.json")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tileset, err := maps.LoadTileset("assets/maps/tilesset/test.png")
+	tileset, err := maps.LoadTileset("assets/images/maps/TilesetFloor.png")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	tilesets, err := maps.LoadTilesets([]string{"assets/maps/tilesset/test.png", "assets/maps/tilesset/TilesetHouse.png"})
+	firstGIDs := []int{1, 573}
+
+	tilesets, err := maps.LoadTilesets([]string{"assets/images/maps/TilesetFloor.png", "assets/images/maps/TilesetHouse.png"}, firstGIDs)
 	if err != nil {
 		log.Fatal(err)
 	}
