@@ -19,7 +19,6 @@ type Game struct {
 	NPCs     []*entities.Npc
 	Rums     []*entities.Rum
 	Tilemap  *maps.TilemapJSON
-	Tileset  *maps.Tileset
 	Tilesets []*maps.Tileset
 	Cam      *camera.Camera
 }
@@ -46,14 +45,7 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
-	tileset, err := maps.LoadTileset("assets/images/maps/TilesetFloor.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	firstGIDs := []int{1, 573}
-
-	tilesets, err := maps.LoadTilesets([]string{"assets/images/maps/TilesetFloor.png", "assets/images/maps/TilesetHouse.png"}, firstGIDs)
+	tilesets, err := maps.LoadTilesets(tilemap)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,7 +57,6 @@ func New() (*Game, error) {
 		NPCs:     npcs,
 		Rums:     rums,
 		Tilemap:  tilemap,
-		Tileset:  tileset,
 		Tilesets: tilesets,
 		Cam:      camera,
 	}, nil

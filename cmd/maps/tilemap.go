@@ -12,10 +12,14 @@ type TilemapLayerJSON struct {
 	Name   string `json:"name"`
 }
 
+type TilesetInfo struct {
+	FirstGID int    `json:"firstgid"`
+	Source   string `json:"source"`
+}
+
 type TilemapJSON struct {
-	Tiles []TilemapLayerJSON `json:"layers"`
-	//Tileheight int `json: tilewidth`
-	//Tilewidth int `json: tilewidth`
+	Tilesets []TilesetInfo      `json:"tilesets"`
+	Tiles    []TilemapLayerJSON `json:"layers"`
 }
 
 func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
