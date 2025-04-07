@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	"image"
 )
 
 // Npc struct
@@ -38,22 +39,30 @@ func NewNPCs(jsonFile string) ([]*Npc, error) {
 }
 
 // Update handles NPC movement
-func (n *Npc) Update(playerX, playerY float64) {
+func (n *Npc) Update(playerX, playerY float64, colliders []image.Rectangle) {
+	n.Dx = 0
+	n.Dy = 0
 	if n.FollowsLast {
 		if n.X < playerX-5 {
-			n.X += 0.5
+			n.Dx = 0.5
 		} else if n.X > playerX+5 {
-			n.X -= 0.5
+			n.Dx = -0.5
 		}
 		if n.Y < playerY-5 {
-			n.Y += 0.5
+			n.Dy = 0.5
 		} else if n.Y > playerY+5 {
-			n.Y -= 0.5
+			n.Dy = -0.5
 		}
 	} else {
 		if n.X > playerX-5 && n.X < playerX+5 && n.Y > playerY-5 && n.Y < playerY+5 {
 			n.FollowsLast = true
 		}
 	}
+	n.X += n.Dx
 
+	CheckCollisionHorizotaly(n.Sprite, colliders)
+
+	n.Y += n.Dy
+
+	CheckCollisionVertical(n.Sprite, colliders)
 }

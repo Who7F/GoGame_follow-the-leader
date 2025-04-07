@@ -5,22 +5,25 @@ import (
 	"follow-the-leader/cmd/camera"
 	"follow-the-leader/cmd/entities"
 	"follow-the-leader/cmd/maps"
+	"image"
 	"image/color"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 // Game struct holds all entities
 type Game struct {
-	Player   *entities.Player
-	NPCs     []*entities.Npc
-	Rums     []*entities.Rum
-	Tilemap  *maps.TilemapJSON
-	Tilesets []*maps.Tileset
-	Cam      *camera.Camera
+	Player    *entities.Player
+	NPCs      []*entities.Npc
+	Rums      []*entities.Rum
+	Tilemap   *maps.TilemapJSON
+	Tilesets  []*maps.Tileset
+	Cam       *camera.Camera
+	colliders []image.Rectangle
 }
 
 // New initializes the game
@@ -59,15 +62,20 @@ func New() (*Game, error) {
 		Tilemap:  tilemap,
 		Tilesets: tilesets,
 		Cam:      camera,
+		colliders: []image.Rectangle{
+			image.Rect(98, 90, 155, 128),
+			image.Rect(210, 170, 256, 210),
+			image.Rect(320, 170, 382, 210),
+		},
 	}, nil
 }
 
 // Update handles game logic
 func (g *Game) Update() error {
-	g.Player.Update()
+	g.Player.Update(g.colliders)
 
 	for _, npc := range g.NPCs {
-		npc.Update(g.Player.X, g.Player.Y)
+		npc.Update(g.Player.X, g.Player.Y, g.colliders)
 	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -99,6 +107,19 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	for _, rum := range g.Rums {
 		rum.Draw(screen, g.Cam)
+	}
+
+	for _, collider := range g.colliders {
+		vector.StrokeRect(
+			screen,
+			float32(collider.Min.X+int(g.Cam.X)),
+			float32(collider.Min.Y+int(g.Cam.Y)),
+			float32(collider.Dx()),
+			float32(collider.Dy()),
+			1.0,
+			color.Black,
+			true,
+		)
 	}
 
 	g.Player.Draw(screen, g.Cam)

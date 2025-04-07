@@ -1,6 +1,8 @@
 package entities
 
 import (
+	"image"
+
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -25,19 +27,29 @@ func NewPlayer(x, y float64) (*Player, error) {
 }
 
 // Update handles movement
-func (p *Player) Update() {
+func (p *Player) Update(colliders []image.Rectangle) {
 	const playerSpeed float64 = 1
+	p.Dx = 0
+	p.Dy = 0
 
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		p.X += playerSpeed
+		p.Dx = playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		p.X -= playerSpeed
+		p.Dx = -playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		p.Y -= playerSpeed
+		p.Dy = -playerSpeed
 	}
 	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		p.Y += playerSpeed
+		p.Dy = playerSpeed
 	}
+
+	p.X += p.Dx
+
+	CheckCollisionHorizotaly(p.Sprite, colliders)
+
+	p.Y += p.Dy
+
+	CheckCollisionVertical(p.Sprite, colliders)
 }
