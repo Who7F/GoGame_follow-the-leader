@@ -91,6 +91,8 @@ func (g *Game) Update() error {
 
 	g.Cam.FollowTarget(g.Player.X+offset, g.Player.Y+offset, screenWidth, screenHeight)
 	g.Cam.Constrain(tilemapWidth, tilemapHeight, screenWidth, screenHeight)
+	dt := 1.0 / 60.0
+	g.Player.Anim.Update(dt)
 	return nil
 }
 
@@ -122,7 +124,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		)
 	}
 
-	g.Player.Draw(screen, g.Cam)
+	g.Player.Anim.Draw(screen, g.Player.X, g.Player.Y)
+
+	//g.Player.Draw(screen, g.Cam)
 }
 
 // Layout sets the screen size

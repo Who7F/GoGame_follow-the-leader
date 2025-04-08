@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/camera"
 	"image"
 
@@ -12,6 +13,7 @@ import (
 type Sprite struct {
 	Img          *ebiten.Image
 	X, Y, Dx, Dy float64
+	Anim         *spriteanim.Animatio
 }
 
 func (s *Sprite) Draw(screen *ebiten.Image, camcam *camera.Camera) {
@@ -28,6 +30,21 @@ func LoadImage(path string) (*ebiten.Image, error) {
 		return nil, fmt.Errorf("failed to load image: %v", err)
 	}
 	return img, nil
+}
+
+func LoadSpriteSheet(path string, frameWidth, frameHeight, frameCount int) ([]*ebiten.Image, error) {
+	img, _, err := ebitenutil.NewImageFromFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	frames := make([]*ebiten.Image, 0, frameCount)
+	for i := 0; i < frameCount; i++ {
+		x := i * frameWidth
+		sub := img.SubImage(image.Rect(x, 0, x+frameWidth, frameHeight)).(*ebiten.Image)
+		frames = append(frames, sub)
+	}
+	return frames, nil
 }
 
 func CheckCollisionHorizotaly(sprite *Sprite, colliders []image.Rectangle) {

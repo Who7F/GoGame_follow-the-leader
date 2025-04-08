@@ -1,10 +1,10 @@
 package entities
 
 import (
+	spriteanim "follow-the-leader/cmd/animations"
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 // Player struct
@@ -15,13 +15,22 @@ type Player struct {
 
 // NewPlayer loads the player sprite
 func NewPlayer(x, y float64) (*Player, error) {
-	img, _, err := ebitenutil.NewImageFromFile("assets/images/player.png")
+	//img, _, err := ebitenutil.NewImageFromFile("assets/images/player.png")
+	frames, err := LoadSpriteSheet("assets/images/player.png", 16, 16, 4)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Player{
-		Sprite:  &Sprite{Img: img, X: x, Y: y},
+		Sprite: &Sprite{
+			X: x,
+			Y: y,
+			Anim: &spriteanim.Animatio{
+				Frames: frames,
+				Speed:  0.1,
+				Loop:   true,
+			},
+		},
 		IsDrunk: 0,
 	}, nil
 }
