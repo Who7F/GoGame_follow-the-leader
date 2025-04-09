@@ -38,13 +38,15 @@ func LoadSpriteSheet(path string, frameWidth, frameHeight, frameCount int) ([]*e
 		return nil, err
 	}
 
-	frames := make([]*ebiten.Image, 0, frameCount)
-	for i := 0; i < frameCount; i++ {
-		x := i * frameWidth
-		sub := img.SubImage(image.Rect(x, 0, x+frameWidth, frameHeight)).(*ebiten.Image)
-		frames = append(frames, sub)
+	config := spriteanim.SpriteSheetConfig{
+		FrameWidth:  frameWidth,
+		FrameHeight: frameHeight,
+		Columns:     4,
+		Rows:        7,
 	}
-	return frames, nil
+
+	frames := spriteanim.SliceSheet(img, config)
+	return frames[0], nil
 }
 
 func CheckCollisionHorizotaly(sprite *Sprite, colliders []image.Rectangle) {
