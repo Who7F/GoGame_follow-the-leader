@@ -2,15 +2,16 @@ package entities
 
 import (
 	spriteanim "follow-the-leader/cmd/animations"
+	"follow-the-leader/cmd/input"
 	"image"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // Player struct
 type Player struct {
 	*Sprite
 	IsDrunk uint
+	Input   input.Input
+	Speed   float64
 }
 
 // NewPlayer loads the player sprite
@@ -29,29 +30,31 @@ func NewPlayer(x, y float64) (*Player, error) {
 				Frames: frames,
 				Speed:  0.1,
 				Loop:   true,
+				Dir:    input.Down,
 			},
 		},
 		IsDrunk: 0,
+		Speed:   2,
+		Input:   &input.KeyboardInput{},
 	}, nil
 }
 
 // Update handles movement
 func (p *Player) Update(colliders []image.Rectangle) {
-	const playerSpeed float64 = 1
+	p.Input.Update()
+	dir := p.Input.Direction()
 	p.Dx = 0
 	p.Dy = 0
 
-	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		p.Dx = playerSpeed
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		p.Dx = -playerSpeed
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		p.Dy = -playerSpeed
-	}
-	if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		p.Dy = playerSpeed
+	switch dir {
+	case input.Right:
+		p.Dx = p.Speed
+	case input.Left:
+		p.Dx = -p.Speed
+	case input.Up:
+		p.Dy = -p.Speed
+	case input.Down:
+		p.Dy = p.Speed
 	}
 
 	p.X += p.Dx

@@ -32,7 +32,7 @@ func LoadImage(path string) (*ebiten.Image, error) {
 	return img, nil
 }
 
-func LoadSpriteSheet(path string, frameWidth, frameHeight, frameCount int) ([]*ebiten.Image, error) {
+func LoadSpriteSheet(path string, frameWidth, frameHeight, frameCount int) ([][]*ebiten.Image, error) {
 	img, _, err := ebitenutil.NewImageFromFile(path)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func LoadSpriteSheet(path string, frameWidth, frameHeight, frameCount int) ([]*e
 	}
 
 	frames := spriteanim.SliceSheet(img, config)
-	return frames[0], nil
+	return frames, nil
 }
 
 func CheckCollisionHorizotaly(sprite *Sprite, colliders []image.Rectangle) {
