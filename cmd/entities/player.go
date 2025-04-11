@@ -2,6 +2,7 @@ package entities
 
 import (
 	spriteanim "follow-the-leader/cmd/animations"
+	"follow-the-leader/cmd/core"
 	"follow-the-leader/cmd/input"
 	"image"
 )
@@ -12,6 +13,7 @@ type Player struct {
 	IsDrunk uint
 	Input   input.Input
 	Speed   float64
+	State   core.SpriteState
 }
 
 // NewPlayer loads the player sprite
@@ -30,30 +32,37 @@ func NewPlayer(x, y float64) (*Player, error) {
 				Frames: frames,
 				Speed:  0.1,
 				Loop:   true,
-				Dir:    input.Down,
+				Dir:    core.Down,
 			},
 		},
 		IsDrunk: 0,
 		Speed:   2,
 		Input:   &input.KeyboardInput{},
+		State:   core.SpriteState(core.IdleAnim),
 	}, nil
 }
 
 // Update handles movement
 func (p *Player) Update(colliders []image.Rectangle) {
 	p.Input.Update()
+
 	dir := p.Input.Direction()
+
+	if dir != core.None {
+		p.Sprite.Anim.Dir = dir
+	}
+
 	p.Dx = 0
 	p.Dy = 0
 
 	switch dir {
-	case input.Right:
+	case core.Right:
 		p.Dx = p.Speed
-	case input.Left:
+	case core.Left:
 		p.Dx = -p.Speed
-	case input.Up:
+	case core.Up:
 		p.Dy = -p.Speed
-	case input.Down:
+	case core.Down:
 		p.Dy = p.Speed
 	}
 

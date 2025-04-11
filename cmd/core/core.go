@@ -3,10 +3,18 @@ package core
 type Direction int
 
 const (
-	Down Direction = iota
+	None Direction = iota
+	Down
 	Up
 	Left
 	Right
+)
+
+type SpriteState int
+
+const (
+	IdleAnim Direction = iota
+	Walking
 )
 
 type UI struct {

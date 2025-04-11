@@ -1,41 +1,35 @@
 package input
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"follow-the-leader/cmd/core"
 
-type Direction int
-
-const (
-	None Direction = iota
-	Up
-	Down
-	Left
-	Right
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Input interface {
 	Update()
-	Direction() Direction
+	Direction() core.Direction
 	ActionPressed() bool
 }
 
 type KeyboardInput struct {
-	dir Direction
+	dir core.Direction
 }
 
 func (k *KeyboardInput) Update() {
-	k.dir = None
+	k.dir = core.None
 	if ebiten.IsKeyPressed(ebiten.KeyRight) {
-		k.dir = Right
+		k.dir = core.Right
 	} else if ebiten.IsKeyPressed(ebiten.KeyLeft) {
-		k.dir = Left
+		k.dir = core.Left
 	} else if ebiten.IsKeyPressed(ebiten.KeyUp) {
-		k.dir = Up
+		k.dir = core.Up
 	} else if ebiten.IsKeyPressed(ebiten.KeyDown) {
-		k.dir = Down
+		k.dir = core.Down
 	}
 }
 
-func (k *KeyboardInput) Direction() Direction {
+func (k *KeyboardInput) Direction() core.Direction {
 	return k.dir
 }
 

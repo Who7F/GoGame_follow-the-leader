@@ -1,8 +1,7 @@
 package spriteanim
 
 import (
-	"follow-the-leader/cmd/input"
-	"follow-the-leader/cmd/ui"
+	"follow-the-leader/cmd/core"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -13,7 +12,7 @@ type Animatio struct {
 	Timer      float64
 	Speed      float64
 	Loop       bool
-	Dir        input.Direction
+	Dir        core.Direction
 }
 
 func (a *Animatio) Update(dt float64) {
@@ -35,15 +34,17 @@ func (a *Animatio) Update(dt float64) {
 	}
 }
 
-func (a *Animatio) CurrentFrame(dir ui.Direction) *ebiten.Image {
+func (a *Animatio) CurrentFrame(dir core.Direction) *ebiten.Image {
 	if len(a.Frames) == 0 {
 		return nil
 	}
-	return a.Frames[a.FrameIndex][dir]
+	const tempFix = 1
+	// temp fix and Directiion has 5 filds, and the sprietsheet is 4
+	return a.Frames[a.FrameIndex][dir-tempFix]
 }
 
 func (a *Animatio) Draw(sceen *ebiten.Image, x, y float64) {
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(x, y)
-	sceen.DrawImage(a.CurrentFrame(ui.Direction(a.Dir)), opts)
+	sceen.DrawImage(a.CurrentFrame(a.Dir), opts)
 }
