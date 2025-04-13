@@ -50,7 +50,11 @@ func (p *Player) Update(colliders []image.Rectangle) {
 
 	if dir != core.None {
 		p.Sprite.Anim.Dir = dir
-	}
+		p.State = core.SpriteState(core.Walking)
+	} else {
+		p.State = core.SpriteState(core.IdleAnim)
+	} //why am have p.State and p.spite.anmi.state
+	p.Sprite.Anim.State = p.State
 
 	p.Dx = 0
 	p.Dy = 0

@@ -13,6 +13,7 @@ type Animatio struct {
 	Speed      float64
 	Loop       bool
 	Dir        core.Direction
+	State      core.SpriteState
 }
 
 func (a *Animatio) Update(dt float64) {
@@ -40,6 +41,11 @@ func (a *Animatio) CurrentFrame(dir core.Direction) *ebiten.Image {
 	}
 	const tempFix = 1
 	// temp fix and Directiion has 5 filds, and the sprietsheet is 4
+	const idle = 4
+	if core.Direction(a.State) == core.IdleAnim {
+		return a.Frames[idle][dir-tempFix]
+	}
+
 	return a.Frames[a.FrameIndex][dir-tempFix]
 }
 
