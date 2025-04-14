@@ -4,6 +4,7 @@ import (
 	"fmt"
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/camera"
+	"follow-the-leader/cmd/core"
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -14,6 +15,8 @@ type Sprite struct {
 	Img          *ebiten.Image
 	X, Y, Dx, Dy float64
 	Anim         *spriteanim.Animatio
+	Dir          core.Direction
+	Speed        float64
 }
 
 func (s *Sprite) Draw(screen *ebiten.Image, camcam *camera.Camera) {

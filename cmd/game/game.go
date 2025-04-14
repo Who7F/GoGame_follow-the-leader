@@ -105,8 +105,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, "Constitution Build!")
 
 	for _, npc := range g.NPCs {
-		npc.Draw(screen, g.Cam)
+		//	npc.Draw(screen, g.Cam)
+		npc.Anim.Draw(screen, g.Cam, npc.X, npc.Y)
 	}
+
 	for _, rum := range g.Rums {
 		rum.Draw(screen, g.Cam)
 	}
@@ -124,7 +126,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		)
 	}
 
-	g.Player.Anim.Draw(screen, g.Player.X, g.Player.Y)
+	g.Player.Anim.Draw(screen, g.Cam, g.Player.X, g.Player.Y)
 
 	//g.Player.Draw(screen, g.Cam)
 }

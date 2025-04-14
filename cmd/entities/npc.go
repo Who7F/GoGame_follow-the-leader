@@ -2,6 +2,7 @@ package entities
 
 import (
 	"fmt"
+	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/core"
 	"image"
 )
@@ -10,9 +11,8 @@ import (
 type Npc struct {
 	*Sprite
 	FollowsLast bool
-	Speed       float64
 	State       core.SpriteState
-	Dir         core.Direction
+	thingTimer  int
 }
 
 type NPCData struct {
@@ -35,21 +35,27 @@ func NewNPCs(jsonFile string) ([]*Npc, error) {
 	npcs := []*Npc{}
 
 	for _, data := range npcData {
-		img, err := LoadImage(data.ImagePath)
+		frames, err := LoadSpriteSheet(data.ImagePath, 16, 16, 4)
 		if err != nil {
 			return nil, fmt.Errorf("failed to load NPC image: %v", err)
 		}
 
 		npc := &Npc{
 			Sprite: &Sprite{
-				Img: img,
-				X:   data.X,
-				Y:   data.Y,
+				X:     data.X,
+				Y:     data.Y,
+				Dir:   core.None,
+				Speed: 1,
+				Anim: &spriteanim.Animatio{
+					Frames: frames,
+					Speed:  0.1,
+					Loop:   true,
+					Dir:    core.Down,
+				},
 			},
 			FollowsLast: data.FollowsLast,
-			Speed:       1,
 			State:       core.SpriteState(core.IdleAnim),
-			Dir:         core.Down,
+			thingTimer:  300,
 		}
 		npcs = append(npcs, npc)
 	}
@@ -58,18 +64,34 @@ func NewNPCs(jsonFile string) ([]*Npc, error) {
 
 // Update handles NPC movement
 func (n *Npc) Update(playerX, playerY float64, colliders []image.Rectangle) {
+	i := 20
+	if n.thingTimer > i {
+		n.thingTimer = 0
+		n.Dir = n.Follows(playerX, playerY, 10)
+	}
+	n.thingTimer++
+
+	if n.Dir != core.None {
+		n.Anim.Dir = n.Dir
+		n.State = core.SpriteState(core.Walking)
+	} else {
+		n.State = core.SpriteState(core.IdleAnim)
+	}
+	n.Anim.State = n.State
+
 	n.Dx = 0
 	n.Dy = 0
+
 	if n.FollowsLast {
-		if n.X < playerX-5 {
+		switch n.Dir {
+		case core.Right:
 			n.Dx = n.Speed
-		} else if n.X > playerX+5 {
+		case core.Left:
 			n.Dx = -n.Speed
-		}
-		if n.Y < playerY-5 {
-			n.Dy = n.Speed
-		} else if n.Y > playerY+5 {
+		case core.Up:
 			n.Dy = -n.Speed
+		case core.Down:
+			n.Dy = n.Speed
 		}
 	} else {
 		if n.X > playerX-5 && n.X < playerX+5 && n.Y > playerY-5 && n.Y < playerY+5 {
@@ -85,25 +107,26 @@ func (n *Npc) Update(playerX, playerY float64, colliders []image.Rectangle) {
 	CheckCollisionVertical(n.Sprite, colliders)
 }
 
-func (n *Npc) Follows(playerX, playerY, distanceMin float64) {
+func (n *Npc) Follows(playerX, playerY, distanceMin float64) core.Direction {
+
 	x := n.X - playerX
 	y := n.Y - playerY
-	n.Dir = core.None
+	dir := core.None
 
 	if abs(x) > abs(y) {
-		if x > distanceMin {
-			n.Dir = core.Right
-		} else if x < -distanceMin {
-			n.Dir = core.Left
+		if x < -distanceMin {
+			dir = core.Right
+		} else if x > distanceMin {
+			dir = core.Left
 		}
 	} else {
 		if y > distanceMin {
-			n.Dir = core.Up
+			dir = core.Up
 		} else if y < -distanceMin {
-			n.Dir = core.Down
+			dir = core.Down
 		}
 	}
-
+	return dir
 }
 
 func abs(n float64) float64 {

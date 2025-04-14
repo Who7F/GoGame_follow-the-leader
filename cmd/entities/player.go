@@ -12,7 +12,6 @@ type Player struct {
 	*Sprite
 	IsDrunk uint
 	Input   input.Input
-	Speed   float64
 	State   core.SpriteState
 }
 
@@ -26,8 +25,10 @@ func NewPlayer(x, y float64) (*Player, error) {
 
 	return &Player{
 		Sprite: &Sprite{
-			X: x,
-			Y: y,
+			X:     x,
+			Y:     y,
+			Dir:   core.None,
+			Speed: 2,
 			Anim: &spriteanim.Animatio{
 				Frames: frames,
 				Speed:  0.1,
@@ -36,7 +37,6 @@ func NewPlayer(x, y float64) (*Player, error) {
 			},
 		},
 		IsDrunk: 0,
-		Speed:   2,
 		Input:   &input.KeyboardInput{},
 		State:   core.SpriteState(core.IdleAnim),
 	}, nil
@@ -44,12 +44,13 @@ func NewPlayer(x, y float64) (*Player, error) {
 
 // Update handles movement
 func (p *Player) Update(colliders []image.Rectangle) {
+	// Get user input
 	p.Input.Update()
 
-	dir := p.Input.Direction()
+	p.Sprite.Dir = p.Input.Direction()
 
-	if dir != core.None {
-		p.Sprite.Anim.Dir = dir
+	if p.Sprite.Dir != core.None {
+		p.Sprite.Anim.Dir = p.Sprite.Dir
 		p.State = core.SpriteState(core.Walking)
 	} else {
 		p.State = core.SpriteState(core.IdleAnim)
@@ -59,7 +60,7 @@ func (p *Player) Update(colliders []image.Rectangle) {
 	p.Dx = 0
 	p.Dy = 0
 
-	switch dir {
+	switch p.Sprite.Dir {
 	case core.Right:
 		p.Dx = p.Speed
 	case core.Left:

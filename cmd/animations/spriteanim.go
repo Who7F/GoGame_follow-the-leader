@@ -1,6 +1,7 @@
 package spriteanim
 
 import (
+	"follow-the-leader/cmd/camera"
 	"follow-the-leader/cmd/core"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -49,8 +50,8 @@ func (a *Animatio) CurrentFrame(dir core.Direction) *ebiten.Image {
 	return a.Frames[a.FrameIndex][dir-tempFix]
 }
 
-func (a *Animatio) Draw(sceen *ebiten.Image, x, y float64) {
+func (a *Animatio) Draw(sceen *ebiten.Image, camcam *camera.Camera, x, y float64) {
 	opts := &ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(x, y)
+	opts.GeoM.Translate(x+camcam.X, y+camcam.Y)
 	sceen.DrawImage(a.CurrentFrame(a.Dir), opts)
 }
