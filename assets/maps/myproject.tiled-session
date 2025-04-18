@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tilesset/TilesetHouse.json",
+    "activeFile": "tilesset/startbace.json",
     "expandedProjectPaths": [
         ".",
         "tilesset"
@@ -27,19 +27,29 @@
             "scaleInDock": 1,
             "scaleInEditor": 2
         },
+        "tilesset/hitboxes.json": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "tilesset/hitboxes.tsj": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
         "tilesset/startbace.json": {
-            "scale": 1,
-            "selectedLayer": 2,
+            "scale": 0.75,
+            "selectedLayer": 0,
             "viewCenter": {
-                "x": 167,
-                "y": 349
+                "x": 260,
+                "y": 621.3333333333333
             }
         },
         "tilesset/startbace2.json": {
             "scale": 0.66796875,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 788.9590643274853,
+                "x": 799.438596491228,
                 "y": 639.2514619883041
             }
         },
@@ -62,7 +72,7 @@
     },
     "frame.defaultDuration": 20,
     "last.exportedFilePath": "D:/Projects/games/go/follow-the-leader/assets/maps/tilesset",
-    "last.imagePath": "D:/Projects/games/go/follow-the-leader/assets/images/maps/buildings",
+    "last.imagePath": "D:/Projects/games/go/follow-the-leader/assets/images/maps",
     "map.height": 80,
     "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
     "map.lastUsedFormat": "json",
@@ -73,23 +83,24 @@
         "tilesset/TilesetFloor.json",
         "tilesset/startbace.json",
         "tilesset/FullHouse.json",
-        "tilesset/startbace2.json",
-        "tilesset/TilesetHouse.json"
+        "tilesset/hitboxes.json"
     ],
     "project": "myproject.tiled-project",
     "recentFiles": [
         "tilesset/TilesetFloor.json",
-        "tilesset/startbace.json",
+        "tilesset/hitboxes.json",
         "tilesset/FullHouse.json",
-        "tilesset/startbace2.json",
+        "tilesset/startbace.json",
         "tilesset/TilesetHouse.json",
+        "tilesset/startbace2.json",
+        "tilesset/hitboxes.tsj",
         "tilesset/test2.json",
         "tilesset/test.json"
     ],
     "tileset.lastUsedFormat": "json",
     "tileset.tileSize": {
-        "height": 16,
-        "width": 16
+        "height": 8,
+        "width": 8
     },
-    "tileset.type": 1
+    "tileset.type": 0
 }

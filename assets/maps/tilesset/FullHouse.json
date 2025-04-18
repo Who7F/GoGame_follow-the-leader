@@ -22,7 +22,30 @@
          "id":1,
          "image":"..\/..\/images\/maps\/buildings\/building2.png",
          "imageheight":48,
-         "imagewidth":64
+         "imagewidth":64,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":44,
+                     "id":19,
+                     "name":"",
+                     "rotation":0,
+                     "type":"",
+                     "visible":true,
+                     "width":62,
+                     "x":1,
+                     "y":4
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            }
         }, 
         {
          "id":2,
