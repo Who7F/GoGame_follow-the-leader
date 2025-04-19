@@ -30,15 +30,15 @@
              "name":"",
              "objects":[
                     {
-                     "height":44,
-                     "id":19,
+                     "height":32,
+                     "id":24,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"Solid",
                      "visible":true,
-                     "width":62,
-                     "x":1,
-                     "y":4
+                     "width":60,
+                     "x":2,
+                     "y":15
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -51,7 +51,52 @@
          "id":2,
          "image":"..\/..\/images\/maps\/buildings\/building3.png",
          "imageheight":48,
-         "imagewidth":48
+         "imagewidth":48,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":32,
+                     "id":2,
+                     "name":"",
+                     "rotation":0,
+                     "type":"Solid",
+                     "visible":true,
+                     "width":14,
+                     "x":2,
+                     "y":15
+                    }, 
+                    {
+                     "height":32,
+                     "id":3,
+                     "name":"",
+                     "rotation":0,
+                     "type":"Solid",
+                     "visible":true,
+                     "width":14,
+                     "x":32,
+                     "y":15
+                    }, 
+                    {
+                     "height":20,
+                     "id":4,
+                     "name":"",
+                     "rotation":0,
+                     "type":"Portal",
+                     "visible":true,
+                     "width":15,
+                     "x":16.7272727272727,
+                     "y":25.64
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            }
         }],
  "tilewidth":64,
  "type":"tileset",

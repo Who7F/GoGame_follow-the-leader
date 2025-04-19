@@ -38,6 +38,14 @@ type Tile struct {
 	Image       string `json:"image"`
 	ImageWidth  int    `json:"imagewidth"`
 	ImageHeight int    `json:"imageheight"`
+	ObjectGroup *ObjectGroup
+}
+
+type ObjectGroup struct {
+}
+
+type CollisionObject struct {
+	ID int `json:"id"`
 }
 
 func (t *Tileset) singleTile(tileIndex, size int) *ebiten.Image {
@@ -94,6 +102,9 @@ func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset,
 	img, _, err := ebitenutil.NewImageFromFile(filepath.Join("assets/images/maps", path))
 	if err != nil {
 		return nil, fmt.Errorf("failed to load tileset image: %v", err)
+	}
+	if tilesetData.Tiles != nil {
+		fmt.Printf(" next ")
 	}
 
 	return &Tileset{
