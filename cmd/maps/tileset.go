@@ -22,6 +22,7 @@ type ImageTile struct {
 	Image       *ebiten.Image
 	ImageWidth  int
 	ImageHeight int
+	ObjectGroup *ObjectGroup
 }
 
 type TilesetJSON struct {
@@ -42,10 +43,18 @@ type Tile struct {
 }
 
 type ObjectGroup struct {
+	Objects []CollisionObject `json:"objects"`
 }
 
 type CollisionObject struct {
-	ID int `json:"id"`
+	ID       int     `json:"id"`
+	Name     string  `json:"name"`
+	Type     string  `json:"type"`
+	X        float64 `json:"x"`
+	Y        float64 `json:"y"`
+	Width    float64 `json:"width"`
+	Height   float64 `json:"height"`
+	Rotation float64 `json:"rotation"`
 }
 
 func (t *Tileset) singleTile(tileIndex, size int) *ebiten.Image {
@@ -103,9 +112,6 @@ func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset,
 	if err != nil {
 		return nil, fmt.Errorf("failed to load tileset image: %v", err)
 	}
-	if tilesetData.Tiles != nil {
-		fmt.Printf(" next ")
-	}
 
 	return &Tileset{
 		Image:    img,
@@ -122,15 +128,39 @@ func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Ti
 		if err != nil {
 			return nil, fmt.Errorf("failed to load tileset image: %v", err)
 		}
+		obj := SetColliders(&collection)
+
 		tiles = append(tiles, ImageTile{
 			ID:          collection.ID,
 			Image:       img,
 			ImageWidth:  collection.ImageWidth,
 			ImageHeight: collection.ImageHeight,
+			ObjectGroup: obj,
 		})
 	}
 	return &Tileset{
 		Tiles:    tiles,
 		FirstGID: tilesetInfo.FirstGID,
 	}, nil
+}
+
+func SetColliders(tile *Tile) *ObjectGroup {
+	if tile.ObjectGroup == nil || len(tile.ObjectGroup.Objects) == 0 {
+		return nil
+	}
+
+	collisionObjects := []CollisionObject{}
+	for _, obj := range tile.ObjectGroup.Objects {
+		collisionObjects = append(collisionObjects, CollisionObject{
+			ID:       obj.ID,
+			Name:     obj.Name,
+			X:        obj.X,
+			Y:        obj.Y,
+			Type:     obj.Type,
+			Width:    obj.Width,
+			Height:   obj.Height,
+			Rotation: obj.Rotation,
+		})
+	}
+	return &ObjectGroup{Objects: collisionObjects}
 }

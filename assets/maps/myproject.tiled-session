@@ -39,7 +39,7 @@
         },
         "tilesset/startbace.json": {
             "scale": 2,
-            "selectedLayer": 0,
+            "selectedLayer": 3,
             "viewCenter": {
                 "x": 183.5,
                 "y": 369.5
@@ -83,15 +83,16 @@
         "tilesset/TilesetFloor.json",
         "tilesset/startbace.json",
         "tilesset/FullHouse.json",
-        "tilesset/hitboxes.json"
+        "tilesset/hitboxes.json",
+        "tilesset/TilesetHouse.json"
     ],
     "project": "myproject.tiled-project",
     "recentFiles": [
         "tilesset/TilesetFloor.json",
         "tilesset/startbace.json",
+        "tilesset/TilesetHouse.json",
         "tilesset/hitboxes.json",
         "tilesset/FullHouse.json",
-        "tilesset/TilesetHouse.json",
         "tilesset/startbace2.json",
         "tilesset/hitboxes.tsj",
         "tilesset/test2.json",
