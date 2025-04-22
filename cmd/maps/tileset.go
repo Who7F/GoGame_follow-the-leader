@@ -11,18 +11,50 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-type Tileset struct {
-	Image    *ebiten.Image
-	Tiles    []ImageTile
-	FirstGID int
+type TileProvider interface {
+	Image(tileIndex int) *ebiten.Image
+	GetObjectGroup(tileIndex int) *ObjectGroup
 }
 
-type ImageTile struct {
-	ID          int
-	Image       *ebiten.Image
+type TileSlice struct {
+	image       *ebiten.Image
+	FirstGID    int
 	ImageWidth  int
 	ImageHeight int
 	ObjectGroup *ObjectGroup
+}
+
+type TileObj struct {
+	images      map[int]*ebiten.Image
+	FirstGID    int
+	ObjectGroup map[int]*ObjectGroup
+}
+
+func (t *TileSlice) GetImage(tileIndex int) *ebiten.Image {
+	tileIndex -= t.FirstGID
+	tileWidth := t.image.Bounds().Dx() / t.ImageWidth
+	sx := (tileIndex % tileWidth) * t.ImageWidth
+	sy := (tileIndex / tileWidth) * t.ImageHeight
+	return t.image.SubImage(image.Rect(sx, sy, sx+t.ImageWidth, sy+t.ImageHeight)).(*ebiten.Image)
+}
+
+func (t *TileSlice) GetObjectGroup(tileIndex int) *ObjectGroup {
+	if t.ObjectGroup != nil {
+		return t.ObjectGroup
+	}
+	return nil
+}
+
+func (t *TileObj) GetImage(tileIndex int) *ebiten.Image {
+	img, ok := t.images[tileIndex-t.FirstGID]
+	if !ok {
+		return nil
+	}
+	return img
+}
+
+func (t *TileObj) GetObjectGroup(tileIndex int) *ObjectGroup {
+	return t.ObjectGroup[tileIndex-t.FirstGID]
 }
 
 type TilesetJSON struct {
@@ -57,19 +89,8 @@ type CollisionObject struct {
 	Rotation float64 `json:"rotation"`
 }
 
-func (t *Tileset) singleTile(tileIndex, size int) *ebiten.Image {
-
-	tileIndex -= t.FirstGID
-
-	tilesetWidthInTiles := t.Image.Bounds().Dx() / size
-	sx := (tileIndex % tilesetWidthInTiles) * size
-	sy := (tileIndex / tilesetWidthInTiles) * size
-
-	return t.Image.SubImage(image.Rect(sx, sy, sx+size, sy+size)).(*ebiten.Image)
-}
-
-func LoadTilesets(tilemap *TilemapJSON) ([]*Tileset, error) {
-	tilesets := []*Tileset{}
+func LoadTilesets(tilemap *TilemapJSON) ([]*TileProvider, error) {
+	tilesets := []*TileProvider{}
 
 	for _, tilesetInfo := range tilemap.Tilesets {
 
@@ -95,7 +116,7 @@ func LoadTilesets(tilemap *TilemapJSON) ([]*Tileset, error) {
 	return tilesets, nil
 }
 
-func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset, error) {
+func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileProvider, error) {
 	if tilesetData.ImagePath != "" {
 		return SetTilesSize(tilesetData, tilesetInfo)
 	}
@@ -113,14 +134,18 @@ func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset,
 		return nil, fmt.Errorf("failed to load tileset image: %v", err)
 	}
 
-	return &Tileset{
-		Image:    img,
-		FirstGID: tilesetInfo.FirstGID,
+	return &TileSlice{
+		image:       img,
+		FirstGID:    tilesetInfo.FirstGID,
+		ImageWidth:  tilesetData.TileWidth,
+		ImageHeight: tilesetData.TileHeight,
 	}, nil
 }
 
-func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset, error) {
-	tiles := []ImageTile{}
+func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileObj, error) {
+	images := make(map[int]*ebiten.Image)
+	groups := make(map[int]*ObjectGroup)
+
 	for _, collection := range tilesetData.Tiles {
 		path := filepath.Base(collection.Image)
 
@@ -130,17 +155,11 @@ func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Ti
 		}
 		obj := SetColliders(&collection)
 
-		tiles = append(tiles, ImageTile{
-			ID:          collection.ID,
-			Image:       img,
-			ImageWidth:  collection.ImageWidth,
-			ImageHeight: collection.ImageHeight,
-			ObjectGroup: obj,
-		})
 	}
-	return &Tileset{
-		Tiles:    tiles,
-		FirstGID: tilesetInfo.FirstGID,
+	return &TileObj{
+		images:      images,
+		FirstGID:    tilesetInfo.FirstGID,
+		ObjectGroup: groups,
 	}, nil
 }
 

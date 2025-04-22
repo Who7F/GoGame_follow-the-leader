@@ -6,48 +6,43 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// Draw the tilemap using the tileset
-func (t *TilemapJSON) Draw(screen *ebiten.Image, tilesets []*Tileset, camcam *camera.Camera) {
-	for layerIndex, layer := range t.Tiles {
+type TileRenderer interface {
+	Draw(screen *ebiten.Image, x, y float64, cam *camera.Camera)
+}
 
-		tileset := tilesets[layerIndex%len(tilesets)]
-		for y := 0; y < layer.Height; y++ {
-			for x := 0; x < layer.Width; x++ {
+type AtlasTile struct {
+	Tileset   *Tileset
+	TileIndex int
+	TileSize  int
+}
 
-				tileIndex := layer.Data[y*layer.Width+x] // get indexing
+func (a *AtlasTile) Draw(screen *ebiten.Image, x, y float64, cam *camera.Camera) {
+	a.Tileset.Draw(screen, a.TileIndex, a.TileSize, x, y, cam)
+}
 
-				// Skip empty tiles
-				if tileIndex == 0 {
-					continue
-				}
+// whole map.
+func (t *TilemapJSON) Draw(screen *ebiten.Image, tilesets []*Tileset, cam *camera.Camera) {
+	t.ForEachTile(tilesets, func(tile *ImageTile, tileIndex, x, y int) {
+		tile.Draw(screen,
+			float64(x*t.TileWidth),
+			float64((y*t.TileHeight)-tile.ImageHeight+t.TileHeight),
+			tilesets[0],
+			cam)
+	})
+}
 
-				if tileset.Image != nil {
+// image
+func (i *ImageTile) Draw(screen *ebiten.Image, x, y float64, tileset *Tileset, cam *camera.Camera) {
+	opts := &ebiten.DrawImageOptions{}
+	opts.GeoM.Translate(x+cam.X, y+cam.Y)
+	screen.DrawImage(i.Image, opts)
+}
 
-					tileRect := tileset.singleTile(tileIndex, 16)
-
-					// Create draw options
-					opts := &ebiten.DrawImageOptions{}
-					opts.GeoM.Translate(float64(x*16)+camcam.X, float64(y*16)+camcam.Y)
-
-					// Draw the tile
-					screen.DrawImage(tileRect, opts)
-				} else {
-					for _, tile := range tileset.Tiles {
-						if tile.ID+tileset.FirstGID == tileIndex {
-							// Create draw options
-							opts := &ebiten.DrawImageOptions{}
-							opts.GeoM.Translate(float64(x*16)+camcam.X, float64((y*16)-tile.ImageHeight+16)+camcam.Y)
-
-							// Draw the tile
-							screen.DrawImage(tile.Image, opts)
-							break
-						}
-					}
-				}
-
-			}
-		}
-	}
+func (t *Tileset) Draw(screen *ebiten.Image, tileIndex, tileSize int, x, y float64, cam *camera.Camera) {
+	tileRect := t.singleTile(tileIndex, tileSize)
+	opts := &ebiten.DrawImageOptions{}
+	opts.GeoM.Translate(x+cam.X, y+cam.Y)
+	screen.DrawImage(tileRect, opts)
 }
 
 type Colliders struct {
@@ -63,6 +58,31 @@ type Colliders struct {
 func (t *TilemapJSON) setColliders(tilesets []*Tileset) ([]*Colliders, error) {
 	colliders := []*Colliders{}
 
+	t.ForEachTile(tilesets, func(tile *ImageTile, tileIndex, x, y int) {
+		if tile.ObjectGroup == nil {
+			return
+		}
+		for _, obj := range tile.ObjectGroup.Objects {
+			worldX := float64(x*16) + obj.X
+			worldY := float64(y*16) + obj.Y
+
+			colliders = append(colliders, &Colliders{
+				X:        worldX,
+				Y:        worldY,
+				Width:    obj.Width,
+				Height:   obj.Height,
+				Rotation: obj.Rotation,
+				Type:     obj.Type,
+				Meta:     map[string]string{"name": obj.Name},
+			})
+		}
+
+	})
+	return colliders, nil
+}
+
+// Look here Python. Here is how you do decorators without the garbage @ syntax
+func (t *TilemapJSON) ForEachTile(tilesets []*Tileset, fn func(tile *ImageTile, tikeIndex, x, y int)) {
 	for layerIndex, layer := range t.Tiles {
 
 		tileset := tilesets[layerIndex%len(tilesets)]
@@ -73,27 +93,23 @@ func (t *TilemapJSON) setColliders(tilesets []*Tileset) ([]*Colliders, error) {
 				if tileIndex == 0 {
 					continue
 				}
-				for _, tile := range tileset.Tiles {
-					if tile.ID+tileset.FirstGID == tileIndex && tile.ObjectGroup != nil {
-						for _, obj := range tile.ObjectGroup.Objects {
-							worldX := float64(x*16) + obj.X
-							worldY := float64(y*16) + obj.Y
 
-							colliders = append(colliders, &Colliders{
-								X:        worldX,
-								Y:        worldY,
-								Width:    obj.Width,
-								Height:   obj.Height,
-								Rotation: obj.Rotation,
-								Type:     obj.Type,
-								Meta:     map[string]string{"name": obj.Name},
-							})
-						}
-					}
+				tile := FindTileByID(tileIndex, tileset)
+				if tile != nil {
+					fn(tile, tileIndex, x, y)
 				}
 
 			}
 		}
 	}
-	return colliders, nil
+}
+
+func FindTileByID(tileIndex int, tileset *Tileset) *ImageTile {
+	for _, tile := range tileset.Tiles {
+		if tile.ID+tileset.FirstGID == tileIndex {
+			return &tile
+		}
+	}
+
+	return nil
 }

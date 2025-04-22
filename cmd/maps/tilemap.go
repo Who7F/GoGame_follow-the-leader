@@ -18,8 +18,10 @@ type TilesetInfo struct {
 }
 
 type TilemapJSON struct {
-	Tilesets []TilesetInfo      `json:"tilesets"`
-	Tiles    []TilemapLayerJSON `json:"layers"`
+	Tilesets   []TilesetInfo      `json:"tilesets"`
+	Tiles      []TilemapLayerJSON `json:"layers"`
+	TileWidth  int                `json:"tilewidth"`
+	TileHeight int                `json:"tileheight"`
 }
 
 func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
