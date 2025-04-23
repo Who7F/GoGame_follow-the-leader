@@ -6,43 +6,13 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type TileRenderer interface {
-	Draw(screen *ebiten.Image, x, y float64, cam *camera.Camera)
-}
-
-type AtlasTile struct {
-	Tileset   *Tileset
-	TileIndex int
-	TileSize  int
-}
-
-func (a *AtlasTile) Draw(screen *ebiten.Image, x, y float64, cam *camera.Camera) {
-	a.Tileset.Draw(screen, a.TileIndex, a.TileSize, x, y, cam)
-}
-
 // whole map.
-func (t *TilemapJSON) Draw(screen *ebiten.Image, tilesets []*Tileset, cam *camera.Camera) {
-	t.ForEachTile(tilesets, func(tile *ImageTile, tileIndex, x, y int) {
-		tile.Draw(screen,
-			float64(x*t.TileWidth),
-			float64((y*t.TileHeight)-tile.ImageHeight+t.TileHeight),
-			tilesets[0],
-			cam)
+func (t *TilemapJSON) Draw(screen *ebiten.Image, provider []TileProvider, cam *camera.Camera) {
+	t.ForEachTile(provider, func(img *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
+		opts := &ebiten.DrawImageOptions{}
+		opts.GeoM.Translate(float64(x*t.TileWidth)+cam.X, float64((y*t.TileHeight)-img.Bounds().Dy()+t.TileHeight)+cam.Y)
+		screen.DrawImage(img, opts)
 	})
-}
-
-// image
-func (i *ImageTile) Draw(screen *ebiten.Image, x, y float64, tileset *Tileset, cam *camera.Camera) {
-	opts := &ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(x+cam.X, y+cam.Y)
-	screen.DrawImage(i.Image, opts)
-}
-
-func (t *Tileset) Draw(screen *ebiten.Image, tileIndex, tileSize int, x, y float64, cam *camera.Camera) {
-	tileRect := t.singleTile(tileIndex, tileSize)
-	opts := &ebiten.DrawImageOptions{}
-	opts.GeoM.Translate(x+cam.X, y+cam.Y)
-	screen.DrawImage(tileRect, opts)
 }
 
 type Colliders struct {
@@ -55,14 +25,14 @@ type Colliders struct {
 	Meta     map[string]string
 }
 
-func (t *TilemapJSON) setColliders(tilesets []*Tileset) ([]*Colliders, error) {
+func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, error) {
 	colliders := []*Colliders{}
 
-	t.ForEachTile(tilesets, func(tile *ImageTile, tileIndex, x, y int) {
-		if tile.ObjectGroup == nil {
+	t.ForEachTile(providers, func(_ *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
+		if group == nil {
 			return
 		}
-		for _, obj := range tile.ObjectGroup.Objects {
+		for _, obj := range group.Objects {
 			worldX := float64(x*16) + obj.X
 			worldY := float64(y*16) + obj.Y
 
@@ -82,10 +52,10 @@ func (t *TilemapJSON) setColliders(tilesets []*Tileset) ([]*Colliders, error) {
 }
 
 // Look here Python. Here is how you do decorators without the garbage @ syntax
-func (t *TilemapJSON) ForEachTile(tilesets []*Tileset, fn func(tile *ImageTile, tikeIndex, x, y int)) {
+func (t *TilemapJSON) ForEachTile(providers []TileProvider, fn func(image *ebiten.Image, group *ObjectGroup, tileIndex, x, y int)) {
 	for layerIndex, layer := range t.Tiles {
 
-		tileset := tilesets[layerIndex%len(tilesets)]
+		provider := providers[layerIndex%len(providers)]
 		for y := 0; y < layer.Height; y++ {
 			for x := 0; x < layer.Width; x++ {
 				tileIndex := layer.Data[y*layer.Width+x]
@@ -94,22 +64,22 @@ func (t *TilemapJSON) ForEachTile(tilesets []*Tileset, fn func(tile *ImageTile, 
 					continue
 				}
 
-				tile := FindTileByID(tileIndex, tileset)
-				if tile != nil {
-					fn(tile, tileIndex, x, y)
+				img := provider.GetImage(tileIndex)
+				if img == nil {
+					continue
 				}
-
+				group := provider.GetObjectGroup(tileIndex)
+				fn(img, group, tileIndex, x, y)
 			}
 		}
 	}
 }
 
-func FindTileByID(tileIndex int, tileset *Tileset) *ImageTile {
-	for _, tile := range tileset.Tiles {
-		if tile.ID+tileset.FirstGID == tileIndex {
-			return &tile
-		}
-	}
-
-	return nil
-}
+//func FindTileByID(tileIndex int, tileset *Tileset) *ImageTile {
+//	for _, tile := range tileset.Tiles {
+//		if tile.ID+tileset.FirstGID == tileIndex {
+//			return &tile
+//		}
+//	}
+//	return nil
+//}

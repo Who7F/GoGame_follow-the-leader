@@ -5,7 +5,6 @@ import (
 	"follow-the-leader/cmd/camera"
 	"follow-the-leader/cmd/entities"
 	"follow-the-leader/cmd/maps"
-	"image"
 	"image/color"
 	"log"
 
@@ -21,9 +20,9 @@ type Game struct {
 	NPCs      []*entities.Npc
 	Rums      []*entities.Rum
 	Tilemap   *maps.TilemapJSON
-	Tilesets  []*maps.Tileset
+	Tilesets  []maps.TileProvider
 	Cam       *camera.Camera
-	colliders []image.Rectangle
+	Colliders []*maps.Colliders
 }
 
 // New initializes the game
@@ -53,26 +52,27 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
+	colliders, err := tilemap.SetColliders(tilesets)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	camera := camera.NewCamera(0, 0)
 
 	return &Game{
-		Player:   player,
-		NPCs:     npcs,
-		Rums:     rums,
-		Tilemap:  tilemap,
-		Tilesets: tilesets,
-		Cam:      camera,
-		colliders: []image.Rectangle{
-			image.Rect(98, 90, 155, 128),
-			image.Rect(210, 170, 256, 210),
-			image.Rect(320, 170, 382, 210),
-		},
+		Player:    player,
+		NPCs:      npcs,
+		Rums:      rums,
+		Tilemap:   tilemap,
+		Tilesets:  tilesets,
+		Cam:       camera,
+		Colliders: colliders,
 	}, nil
 }
 
 // Update handles game logic
 func (g *Game) Update() error {
-	g.Player.Update(g.colliders)
+	g.Player.Update(g.Colliders)
 
 	for _, npc := range g.NPCs {
 		npc.Update(g.Player.X, g.Player.Y, g.colliders)

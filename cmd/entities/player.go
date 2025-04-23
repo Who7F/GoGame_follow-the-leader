@@ -4,7 +4,7 @@ import (
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/core"
 	"follow-the-leader/cmd/input"
-	"image"
+	"follow-the-leader/cmd/maps"
 )
 
 // Player struct
@@ -43,7 +43,7 @@ func NewPlayer(x, y float64) (*Player, error) {
 }
 
 // Update handles movement
-func (p *Player) Update(colliders []image.Rectangle) {
+func (p *Player) Update(colliders []*maps.Colliders) {
 	// Get user input
 	p.Input.Update()
 

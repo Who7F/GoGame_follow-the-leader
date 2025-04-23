@@ -12,7 +12,7 @@ import (
 )
 
 type TileProvider interface {
-	Image(tileIndex int) *ebiten.Image
+	GetImage(tileIndex int) *ebiten.Image
 	GetObjectGroup(tileIndex int) *ObjectGroup
 }
 
@@ -89,8 +89,8 @@ type CollisionObject struct {
 	Rotation float64 `json:"rotation"`
 }
 
-func LoadTilesets(tilemap *TilemapJSON) ([]*TileProvider, error) {
-	tilesets := []*TileProvider{}
+func LoadTilesets(tilemap *TilemapJSON) ([]TileProvider, error) {
+	tileProvider := []TileProvider{}
 
 	for _, tilesetInfo := range tilemap.Tilesets {
 
@@ -105,18 +105,18 @@ func LoadTilesets(tilemap *TilemapJSON) ([]*TileProvider, error) {
 			return nil, err
 		}
 
-		tileset, err := SetTilesetFromData(&tilesetData, &tilesetInfo)
+		tiles, err := SetTilesetFromData(&tilesetData, &tilesetInfo)
 		if err != nil {
 			return nil, err
 		}
 
-		tilesets = append(tilesets, tileset)
+		tileProvider = append(tileProvider, tiles)
 
 	}
-	return tilesets, nil
+	return tileProvider, nil
 }
 
-func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileProvider, error) {
+func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (TileProvider, error) {
 	if tilesetData.ImagePath != "" {
 		return SetTilesSize(tilesetData, tilesetInfo)
 	}
@@ -126,7 +126,7 @@ func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Ti
 	return nil, fmt.Errorf("failed to load tileset: no image or tile data found in %s", tilesetInfo.Source)
 }
 
-func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Tileset, error) {
+func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileSlice, error) {
 	path := filepath.Base(tilesetData.ImagePath)
 
 	img, _, err := ebitenutil.NewImageFromFile(filepath.Join("assets/images/maps", path))
@@ -154,6 +154,10 @@ func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Ti
 			return nil, fmt.Errorf("failed to load tileset image: %v", err)
 		}
 		obj := SetColliders(&collection)
+		images[collection.ID] = img
+		if obj != nil {
+			groups[collection.ID] = obj
+		}
 
 	}
 	return &TileObj{
