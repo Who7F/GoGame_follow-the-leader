@@ -4,7 +4,7 @@ import (
 	"fmt"
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/core"
-	"image"
+	"follow-the-leader/cmd/maps"
 )
 
 // Npc struct
@@ -63,7 +63,7 @@ func NewNPCs(jsonFile string) ([]*Npc, error) {
 }
 
 // Update handles NPC movement
-func (n *Npc) Update(playerX, playerY float64, colliders []image.Rectangle) {
+func (n *Npc) Update(playerX, playerY float64, colliders []*maps.Colliders) {
 	i := 20
 	if n.thingTimer > i {
 		n.thingTimer = 0
@@ -100,11 +100,11 @@ func (n *Npc) Update(playerX, playerY float64, colliders []image.Rectangle) {
 	}
 	n.X += n.Dx
 
-	CheckCollisionHorizotaly(n.Sprite, colliders)
+	//CheckCollisionHorizotaly(n.Sprite, colliders)
 
 	n.Y += n.Dy
 
-	CheckCollisionVertical(n.Sprite, colliders)
+	//CheckCollisionVertical(n.Sprite, colliders)
 }
 
 func (n *Npc) Follows(playerX, playerY, distanceMin float64) core.Direction {

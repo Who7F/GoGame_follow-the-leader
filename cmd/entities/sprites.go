@@ -5,6 +5,7 @@ import (
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/camera"
 	"follow-the-leader/cmd/core"
+	"follow-the-leader/cmd/maps"
 	"image"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -74,4 +75,17 @@ func CheckCollisionVertical(sprite *Sprite, colliders []image.Rectangle) {
 			}
 		}
 	}
+}
+
+func checkCollision(x, y, width, height float64, colliders []*maps.Colliders) bool {
+	for _, c := range colliders {
+		if aabb(x, y, width, height, c.X, c.Y, c.Width, c.Height) {
+			return true
+		}
+	}
+	return false
+}
+
+func aabb(x1, y1, w1, h1, x2, y2, w2, h2 float64) bool {
+	return x1 < x2+w2 && x1+w1 > x2 && y1 < y2+h2 && y1+h1 > y2
 }

@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"fmt"
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/core"
 	"follow-the-leader/cmd/input"
@@ -73,9 +74,13 @@ func (p *Player) Update(colliders []*maps.Colliders) {
 
 	p.X += p.Dx
 
-	CheckCollisionHorizotaly(p.Sprite, colliders)
+	//CheckCollisionHorizotaly(p.Sprite, colliders)
 
 	p.Y += p.Dy
 
-	CheckCollisionVertical(p.Sprite, colliders)
+	//CheckCollisionVertical(p.Sprite, colliders)
+
+	if checkCollision(p.X, p.Y, 16, 16, colliders) {
+		fmt.Printf("bump")
+	}
 }

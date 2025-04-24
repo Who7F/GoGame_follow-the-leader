@@ -75,7 +75,7 @@ func (g *Game) Update() error {
 	g.Player.Update(g.Colliders)
 
 	for _, npc := range g.NPCs {
-		npc.Update(g.Player.X, g.Player.Y, g.colliders)
+		npc.Update(g.Player.X, g.Player.Y, g.Colliders)
 	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
@@ -113,13 +113,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		rum.Draw(screen, g.Cam)
 	}
 
-	for _, collider := range g.colliders {
+	for _, collider := range g.Colliders {
 		vector.StrokeRect(
 			screen,
-			float32(collider.Min.X+int(g.Cam.X)),
-			float32(collider.Min.Y+int(g.Cam.Y)),
-			float32(collider.Dx()),
-			float32(collider.Dy()),
+			float32(int(collider.X)+int(g.Cam.X)),
+			float32(int(collider.Y)+int(g.Cam.Y)),
+			float32(collider.Width),
+			float32(collider.Height),
 			1.0,
 			color.Black,
 			true,

@@ -34,7 +34,7 @@ func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, erro
 		}
 		for _, obj := range group.Objects {
 			worldX := float64(x*16) + obj.X
-			worldY := float64(y*16) + obj.Y
+			worldY := float64(y*16) + obj.Y - float64(t.TileHeight)
 
 			colliders = append(colliders, &Colliders{
 				X:        worldX,
