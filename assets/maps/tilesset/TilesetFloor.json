@@ -1,4 +1,5 @@
-{ "columns":22,
+{ "class":"Ground",
+ "columns":22,
  "image":"..\/..\/images\/maps\/TilesetFloor.png",
  "imageheight":417,
  "imagewidth":352,

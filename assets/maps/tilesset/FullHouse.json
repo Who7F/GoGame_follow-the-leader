@@ -1,4 +1,5 @@
-{ "columns":0,
+{ "class":"House",
+ "columns":0,
  "grid":
     {
      "height":1,
@@ -26,9 +27,30 @@
                      "ellipse":true,
                      "height":20,
                      "id":1,
-                     "name":"",
+                     "name":"Bob",
+                     "properties":[
+                            {
+                             "name":"Direction",
+                             "type":"string",
+                             "value":""
+                            }, 
+                            {
+                             "name":"Event",
+                             "type":"string",
+                             "value":"Text0001"
+                            }, 
+                            {
+                             "name":"Shape",
+                             "type":"string",
+                             "value":"Circle"
+                            }, 
+                            {
+                             "name":"SpeedMultiplier",
+                             "type":"float",
+                             "value":0
+                            }],
                      "rotation":0,
-                     "type":"Solid",
+                     "type":"Trigger",
                      "visible":true,
                      "width":20,
                      "x":30,
@@ -39,13 +61,7 @@
              "visible":true,
              "x":0,
              "y":0
-            },
-         "properties":[
-                {
-                 "name":"Shape",
-                 "type":"string",
-                 "value":"circle"
-                }]
+            }
         }, 
         {
          "id":1,
@@ -73,7 +89,8 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "type":"Sut"
         }, 
         {
          "id":2,
@@ -86,44 +103,56 @@
              "name":"",
              "objects":[
                     {
-                     "height":32,
-                     "id":2,
+                     "height":0,
+                     "id":5,
                      "name":"",
+                     "polygon":[
+                            {
+                             "x":0,
+                             "y":0
+                            }, 
+                            {
+                             "x":48,
+                             "y":0
+                            }, 
+                            {
+                             "x":48,
+                             "y":48
+                            }, 
+                            {
+                             "x":30.9090909090909,
+                             "y":48
+                            }, 
+                            {
+                             "x":30.9090909090909,
+                             "y":32
+                            }, 
+                            {
+                             "x":16.7272727272727,
+                             "y":32
+                            }, 
+                            {
+                             "x":16.7272727272727,
+                             "y":48
+                            }, 
+                            {
+                             "x":0,
+                             "y":48
+                            }],
                      "rotation":0,
-                     "type":"Solid",
+                     "type":"",
                      "visible":true,
-                     "width":14,
-                     "x":2,
-                     "y":15
-                    }, 
-                    {
-                     "height":32,
-                     "id":3,
-                     "name":"",
-                     "rotation":0,
-                     "type":"Solid",
-                     "visible":true,
-                     "width":14,
-                     "x":32,
-                     "y":15
-                    }, 
-                    {
-                     "height":20,
-                     "id":4,
-                     "name":"",
-                     "rotation":0,
-                     "type":"Portal",
-                     "visible":true,
-                     "width":15,
-                     "x":16.7272727272727,
-                     "y":25.64
+                     "width":0,
+                     "x":0,
+                     "y":0
                     }],
              "opacity":1,
              "type":"objectgroup",
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "type":"Fuck"
         }],
  "tilewidth":64,
  "type":"tileset",

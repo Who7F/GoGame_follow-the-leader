@@ -3,10 +3,10 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "tilesset/FullHouse.json",
+    "activeFile": "tilesset/startbace.json",
     "expandedProjectPaths": [
-        "tilesset",
-        "."
+        ".",
+        "tilesset"
     ],
     "fileStates": {
         "tilesset/FullHouse.json": {
@@ -38,19 +38,22 @@
             "scaleInEditor": 1
         },
         "tilesset/startbace.json": {
-            "scale": 2,
-            "selectedLayer": 3,
+            "expandedObjectLayers": [
+                8
+            ],
+            "scale": 1,
+            "selectedLayer": 5,
             "viewCenter": {
-                "x": 183.5,
-                "y": 369.5
+                "x": 549,
+                "y": 436
             }
         },
         "tilesset/startbace2.json": {
             "scale": 0.66796875,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 799.438596491228,
-                "y": 639.2514619883041
+                "x": 800.187134502924,
+                "y": 640
             }
         },
         "tilesset/test.json": {
@@ -84,16 +87,18 @@
         "tilesset/startbace.json",
         "tilesset/FullHouse.json",
         "tilesset/hitboxes.json",
-        "tilesset/TilesetHouse.json"
+        "tilesset/TilesetHouse.json",
+        "tilesset/startbace2.json"
     ],
     "project": "myproject.tiled-project",
+    "property.type": "string",
     "recentFiles": [
         "tilesset/TilesetFloor.json",
-        "tilesset/startbace.json",
+        "tilesset/startbace2.json",
         "tilesset/TilesetHouse.json",
         "tilesset/hitboxes.json",
         "tilesset/FullHouse.json",
-        "tilesset/startbace2.json",
+        "tilesset/startbace.json",
         "tilesset/hitboxes.tsj",
         "tilesset/test2.json",
         "tilesset/test.json"

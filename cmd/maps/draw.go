@@ -1,6 +1,7 @@
 package maps
 
 import (
+	"fmt"
 	"follow-the-leader/cmd/camera"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -22,19 +23,23 @@ type Colliders struct {
 	Rotation float64
 	Type     string
 	TileID   int
+	Ellipe   bool
 	Meta     map[string]string
+	Polygon  []Point
 }
 
 func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, error) {
 	colliders := []*Colliders{}
-
 	t.ForEachTile(providers, func(_ *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
+
 		if group == nil {
 			return
 		}
+
 		for _, obj := range group.Objects {
-			worldX := float64(x*16) + obj.X
-			worldY := float64(y*16) + obj.Y - float64(t.TileHeight)
+
+			worldX := float64(x*t.TileWidth) + obj.X
+			worldY := float64(y*t.TileHeight) - obj.Y
 
 			colliders = append(colliders, &Colliders{
 				X:        worldX,
@@ -43,11 +48,16 @@ func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, erro
 				Height:   obj.Height,
 				Rotation: obj.Rotation,
 				Type:     obj.Type,
+				Ellipe:   obj.Ellipe,
 				Meta:     map[string]string{"name": obj.Name},
 			})
 		}
 
 	})
+	for _, c := range colliders {
+		fmt.Printf("%v", c.Ellipe)
+	}
+
 	return colliders, nil
 }
 

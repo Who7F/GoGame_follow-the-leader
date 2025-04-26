@@ -78,6 +78,11 @@ type ObjectGroup struct {
 	Objects []CollisionObject `json:"objects"`
 }
 
+type Point struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+}
+
 type CollisionObject struct {
 	ID       int     `json:"id"`
 	Name     string  `json:"name"`
@@ -87,6 +92,10 @@ type CollisionObject struct {
 	Width    float64 `json:"width"`
 	Height   float64 `json:"height"`
 	Rotation float64 `json:"rotation"`
+
+	Ellipe  bool    `json:"ellipse,omitempty"`
+	Polygon []Point `json:"polygon,omitempty"`
+	//Meta    map[string]string `json:"properties,omitempty"`
 }
 
 func LoadTilesets(tilemap *TilemapJSON) ([]TileProvider, error) {
@@ -174,6 +183,7 @@ func SetColliders(tile *Tile) *ObjectGroup {
 
 	collisionObjects := []CollisionObject{}
 	for _, obj := range tile.ObjectGroup.Objects {
+		fmt.Println("Load collision")
 		collisionObjects = append(collisionObjects, CollisionObject{
 			ID:       obj.ID,
 			Name:     obj.Name,
@@ -183,6 +193,7 @@ func SetColliders(tile *Tile) *ObjectGroup {
 			Width:    obj.Width,
 			Height:   obj.Height,
 			Rotation: obj.Rotation,
+			Ellipe:   obj.Ellipe,
 		})
 	}
 	return &ObjectGroup{Objects: collisionObjects}
