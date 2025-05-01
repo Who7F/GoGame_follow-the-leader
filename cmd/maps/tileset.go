@@ -183,7 +183,6 @@ func SetColliders(tile *Tile) *ObjectGroup {
 
 	collisionObjects := []CollisionObject{}
 	for _, obj := range tile.ObjectGroup.Objects {
-		fmt.Println("Load collision")
 		collisionObjects = append(collisionObjects, CollisionObject{
 			ID:       obj.ID,
 			Name:     obj.Name,
@@ -194,6 +193,7 @@ func SetColliders(tile *Tile) *ObjectGroup {
 			Height:   obj.Height,
 			Rotation: obj.Rotation,
 			Ellipe:   obj.Ellipe,
+			Polygon:  obj.Polygon,
 		})
 	}
 	return &ObjectGroup{Objects: collisionObjects}

@@ -17,9 +17,19 @@ type TilesetInfo struct {
 	Source   string `json:"source"`
 }
 
+type ObjectJSON struct {
+	Type     string `json:"type"`
+	Width    int    `json:"width"`
+	Height   int    `json:"height"`
+	X        int    `json:"x"`
+	Y        int    `json:"y"`
+	Rotation int    `json:"rotation"`
+}
+
 type TilemapJSON struct {
 	Tilesets   []TilesetInfo      `json:"tilesets"`
 	Tiles      []TilemapLayerJSON `json:"layers"`
+	Object     []ObjectJSON       `json:"objects"`
 	TileWidth  int                `json:"tilewidth"`
 	TileHeight int                `json:"tileheight"`
 }

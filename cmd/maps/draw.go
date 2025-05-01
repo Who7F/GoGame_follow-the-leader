@@ -28,10 +28,10 @@ type Colliders struct {
 	Polygon  []Point
 }
 
-func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, error) {
-	colliders := []*Colliders{}
-	t.ForEachTile(providers, func(_ *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
+func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]ColliderProvider, error) {
+	colliders := []ColliderProvider{}
 
+	t.ForEachTile(providers, func(e *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
 		if group == nil {
 			return
 		}
@@ -39,24 +39,57 @@ func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]*Colliders, erro
 		for _, obj := range group.Objects {
 
 			worldX := float64(x*t.TileWidth) + obj.X
-			worldY := float64(y*t.TileHeight) - obj.Y
+			worldY := float64((y * t.TileHeight) + t.TileHeight - int(obj.Height)) //+obj.Y
 
-			colliders = append(colliders, &Colliders{
-				X:        worldX,
-				Y:        worldY,
-				Width:    obj.Width,
-				Height:   obj.Height,
-				Rotation: obj.Rotation,
-				Type:     obj.Type,
-				Ellipe:   obj.Ellipe,
-				Meta:     map[string]string{"name": obj.Name},
-			})
+			meta := make(map[string]string)
+			meta["name"] = obj.Name
+
+			switch {
+			case obj.Ellipe:
+				colliders = append(colliders, &CircleColliders{
+					X:      worldX + obj.Width/2,
+					Y:      worldY + obj.Height/2,
+					Layer:  0,
+					Type:   obj.Type,
+					Radius: obj.Width / 2,
+					Meta:   meta,
+				})
+			case len(obj.Polygon) > 0:
+				fmt.Printf("oh: %v wh:%v", obj.Height, worldY)
+				points := make([]Point, len(obj.Polygon))
+				for i, pt := range obj.Polygon {
+					points[i] = Point{
+						X: pt.X,
+						Y: pt.Y - float64(e.Bounds().Dy()),
+					}
+				}
+				colliders = append(colliders, &PolygonColliders{
+					X:        worldX,
+					Y:        worldY,
+					Layer:    0,
+					Width:    obj.Width,
+					Height:   obj.Height,
+					Rotation: obj.Rotation,
+					//Polygon:  obj.Polygon,
+					Polygon: points,
+					Type:    obj.Type,
+					Meta:    meta,
+				})
+			default:
+				colliders = append(colliders, &RectColliders{
+					X:        worldX,
+					Y:        worldY,
+					Layer:    0,
+					Width:    obj.Width,
+					Height:   obj.Height,
+					Rotation: obj.Rotation,
+					Type:     obj.Type,
+					Meta:     meta,
+				})
+			}
 		}
 
 	})
-	for _, c := range colliders {
-		fmt.Printf("%v", c.Ellipe)
-	}
 
 	return colliders, nil
 }
@@ -84,12 +117,3 @@ func (t *TilemapJSON) ForEachTile(providers []TileProvider, fn func(image *ebite
 		}
 	}
 }
-
-//func FindTileByID(tileIndex int, tileset *Tileset) *ImageTile {
-//	for _, tile := range tileset.Tiles {
-//		if tile.ID+tileset.FirstGID == tileIndex {
-//			return &tile
-//		}
-//	}
-//	return nil
-//}

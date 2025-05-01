@@ -25,7 +25,7 @@
              "objects":[
                     {
                      "ellipse":true,
-                     "height":20,
+                     "height":58,
                      "id":1,
                      "name":"Bob",
                      "properties":[
@@ -52,9 +52,9 @@
                      "rotation":0,
                      "type":"Trigger",
                      "visible":true,
-                     "width":20,
-                     "x":30,
-                     "y":26
+                     "width":60,
+                     "x":2,
+                     "y":-12
                     }],
              "opacity":1,
              "type":"objectgroup",
@@ -100,50 +100,54 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
+                     "height":46,
+                     "id":6,
+                     "name":"h",
+                     "rotation":0,
+                     "type":"House",
+                     "visible":true,
+                     "width":8,
+                     "x":0,
+                     "y":0.75
+                    }, 
+                    {
                      "height":0,
-                     "id":5,
-                     "name":"",
+                     "id":8,
+                     "name":"h",
                      "polygon":[
                             {
                              "x":0,
                              "y":0
                             }, 
                             {
-                             "x":48,
-                             "y":0
-                            }, 
-                            {
-                             "x":48,
-                             "y":48
-                            }, 
-                            {
-                             "x":30.9090909090909,
-                             "y":48
-                            }, 
-                            {
-                             "x":30.9090909090909,
-                             "y":32
-                            }, 
-                            {
-                             "x":16.7272727272727,
-                             "y":32
-                            }, 
-                            {
-                             "x":16.7272727272727,
-                             "y":48
-                            }, 
-                            {
                              "x":0,
                              "y":48
+                            }, 
+                            {
+                             "x":-8,
+                             "y":48
+                            }, 
+                            {
+                             "x":-8,
+                             "y":4.5
+                            }, 
+                            {
+                             "x":-40.5,
+                             "y":4.5
+                            }, 
+                            {
+                             "x":-39.5,
+                             "y":0
                             }],
                      "rotation":0,
-                     "type":"",
+                     "type":"House",
                      "visible":true,
                      "width":0,
-                     "x":0,
+                     "x":48,
                      "y":0
                     }],
              "opacity":1,

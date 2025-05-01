@@ -11,7 +11,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
-	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
 // Game struct holds all entities
@@ -22,7 +21,7 @@ type Game struct {
 	Tilemap   *maps.TilemapJSON
 	Tilesets  []maps.TileProvider
 	Cam       *camera.Camera
-	Colliders []*maps.Colliders
+	Colliders []maps.ColliderProvider
 }
 
 // New initializes the game
@@ -113,17 +112,11 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		rum.Draw(screen, g.Cam)
 	}
 
-	for _, collider := range g.Colliders {
-		vector.StrokeRect(
-			screen,
-			float32(int(collider.X)+int(g.Cam.X)),
-			float32(int(collider.Y)+int(g.Cam.Y)),
-			float32(collider.Width),
-			float32(collider.Height),
-			1.0,
-			color.Black,
-			true,
-		)
+	colliderDebug := true
+	if colliderDebug {
+		for _, collider := range g.Colliders {
+			collider.Draw(screen, g.Cam)
+		}
 	}
 
 	g.Player.Anim.Draw(screen, g.Cam, g.Player.X, g.Player.Y)

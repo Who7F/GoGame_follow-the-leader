@@ -63,7 +63,7 @@ func NewNPCs(jsonFile string) ([]*Npc, error) {
 }
 
 // Update handles NPC movement
-func (n *Npc) Update(playerX, playerY float64, colliders []*maps.Colliders) {
+func (n *Npc) Update(playerX, playerY float64, colliders []maps.ColliderProvider) {
 	i := 20
 	if n.thingTimer > i {
 		n.thingTimer = 0

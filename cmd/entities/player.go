@@ -1,7 +1,6 @@
 package entities
 
 import (
-	"fmt"
 	spriteanim "follow-the-leader/cmd/animations"
 	"follow-the-leader/cmd/core"
 	"follow-the-leader/cmd/input"
@@ -44,7 +43,7 @@ func NewPlayer(x, y float64) (*Player, error) {
 }
 
 // Update handles movement
-func (p *Player) Update(colliders []*maps.Colliders) {
+func (p *Player) Update(colliders []maps.ColliderProvider) {
 	// Get user input
 	p.Input.Update()
 
@@ -80,7 +79,4 @@ func (p *Player) Update(colliders []*maps.Colliders) {
 
 	//CheckCollisionVertical(p.Sprite, colliders)
 
-	if checkCollision(p.X, p.Y, 16, 16, colliders) {
-		fmt.Printf("bump")
-	}
 }
