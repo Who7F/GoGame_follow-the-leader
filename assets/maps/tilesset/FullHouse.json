@@ -61,7 +61,8 @@
              "visible":true,
              "x":0,
              "y":0
-            }
+            },
+         "type":"me"
         }, 
         {
          "id":1,
@@ -100,7 +101,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

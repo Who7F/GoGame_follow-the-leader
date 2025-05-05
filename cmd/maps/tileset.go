@@ -1,10 +1,8 @@
 package maps
 
 import (
-	"encoding/json"
 	"fmt"
 	"image"
-	"os"
 	"path/filepath"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -57,86 +55,73 @@ func (t *TileObj) GetObjectGroup(tileIndex int) *ObjectGroup {
 	return t.ObjectGroup[tileIndex-t.FirstGID]
 }
 
-type TilesetJSON struct {
-	ImagePath  string `json:"image"`
-	TileWidth  int    `json:"tilewidth"`
-	TileHeight int    `json:"tileheight"`
-	TileCount  int    `json:"tilecount"`
-	Columns    int    `json:"columns"`
-	Tiles      []Tile `json:"tiles"`
-}
-
 type Tile struct {
-	ID          int    `json:"id"`
-	Image       string `json:"image"`
-	ImageWidth  int    `json:"imagewidth"`
-	ImageHeight int    `json:"imageheight"`
+	ID          int
+	Image       string
+	ImageWidth  int
+	ImageHeight int
 	ObjectGroup *ObjectGroup
 }
 
 type ObjectGroup struct {
-	Objects []CollisionObject `json:"objects"`
+	Objects []CollisionObject
 }
 
 type Point struct {
-	X float64 `json:"x"`
-	Y float64 `json:"y"`
+	X float64
+	Y float64
 }
 
 type CollisionObject struct {
-	ID       int     `json:"id"`
-	Name     string  `json:"name"`
-	Type     string  `json:"type"`
-	X        float64 `json:"x"`
-	Y        float64 `json:"y"`
-	Width    float64 `json:"width"`
-	Height   float64 `json:"height"`
-	Rotation float64 `json:"rotation"`
+	ID       int
+	Name     string
+	Type     string
+	X        float64
+	Y        float64
+	Width    float64
+	Height   float64
+	Rotation float64
 
-	Ellipe  bool    `json:"ellipse,omitempty"`
-	Polygon []Point `json:"polygon,omitempty"`
+	Ellipe  bool
+	Polygon []Point
 	//Meta    map[string]string `json:"properties,omitempty"`
 }
 
-func LoadTilesets(tilemap *TilemapJSON) ([]TileProvider, error) {
+func LoadTilesets(tilemap *TilemapTiled) ([]TileProvider, error) {
 	tileProvider := []TileProvider{}
 
 	for _, tilesetInfo := range tilemap.Tilesets {
 
-		contents, err := os.ReadFile(filepath.Join("assets/maps/tilesset/", tilesetInfo.Source))
+		if tilesetInfo.Parsed == nil {
+			return nil, fmt.Errorf("tikeset %s was not parsed", tilesetInfo.Source)
+		}
+
+		tilesetData := tilesetInfo.Parsed
+		GID := tilesetInfo.FirstGID
+
+		provider, err := SetTilesetFromData(tilesetData, &tilesetInfo, GID)
 		if err != nil {
 			return nil, err
 		}
 
-		tilesetData := TilesetJSON{}
-		err = json.Unmarshal(contents, &tilesetData)
-		if err != nil {
-			return nil, err
-		}
-
-		tiles, err := SetTilesetFromData(&tilesetData, &tilesetInfo)
-		if err != nil {
-			return nil, err
-		}
-
-		tileProvider = append(tileProvider, tiles)
+		tileProvider = append(tileProvider, provider)
 
 	}
 	return tileProvider, nil
 }
 
-func SetTilesetFromData(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (TileProvider, error) {
-	if tilesetData.ImagePath != "" {
-		return SetTilesSize(tilesetData, tilesetInfo)
+func SetTilesetFromData(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTiled, GID int) (TileProvider, error) {
+	if tilesetData.Image != "" {
+		return SetTilesSize(tilesetData, tilesetInfo, GID)
 	}
 	if len(tilesetData.Tiles) > 0 {
-		return SetImageCollection(tilesetData, tilesetInfo)
+		return SetImageCollection(tilesetData, tilesetInfo, GID)
 	}
 	return nil, fmt.Errorf("failed to load tileset: no image or tile data found in %s", tilesetInfo.Source)
 }
 
-func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileSlice, error) {
-	path := filepath.Base(tilesetData.ImagePath)
+func SetTilesSize(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTiled, GID int) (*TileSlice, error) {
+	path := filepath.Base(tilesetData.Image)
 
 	img, _, err := ebitenutil.NewImageFromFile(filepath.Join("assets/images/maps", path))
 	if err != nil {
@@ -145,13 +130,13 @@ func SetTilesSize(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileSlic
 
 	return &TileSlice{
 		image:       img,
-		FirstGID:    tilesetInfo.FirstGID,
+		FirstGID:    GID,
 		ImageWidth:  tilesetData.TileWidth,
 		ImageHeight: tilesetData.TileHeight,
 	}, nil
 }
 
-func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*TileObj, error) {
+func SetImageCollection(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTiled, GID int) (*TileObj, error) {
 	images := make(map[int]*ebiten.Image)
 	groups := make(map[int]*ObjectGroup)
 
@@ -162,39 +147,70 @@ func SetImageCollection(tilesetData *TilesetJSON, tilesetInfo *TilesetInfo) (*Ti
 		if err != nil {
 			return nil, fmt.Errorf("failed to load tileset image: %v", err)
 		}
-		obj := SetColliders(&collection)
+		//obj := SetColliders(&collection)
 		images[collection.ID] = img
-		if obj != nil {
-			groups[collection.ID] = obj
-		}
+		//if obj != nil {
+		//	groups[collection.ID] = obj
+		//}
 
 	}
 	return &TileObj{
 		images:      images,
-		FirstGID:    tilesetInfo.FirstGID,
+		FirstGID:    GID,
 		ObjectGroup: groups,
 	}, nil
 }
 
-func SetColliders(tile *Tile) *ObjectGroup {
-	if tile.ObjectGroup == nil || len(tile.ObjectGroup.Objects) == 0 {
-		return nil
+func SetColliders(tilemap *TilemapTiled) (*ObjectGroup, error) {
+	allObjects := []CollisionObject{}
+
+	for _, layer := range tilemap.Tiles {
+		if layer.Type == "objectgroup" && len(layer.Objects) > 0 {
+			for _, obj := range layer.Objects {
+				allObjects = append(allObjects, ConverObject(obj))
+			}
+		}
 	}
 
-	collisionObjects := []CollisionObject{}
-	for _, obj := range tile.ObjectGroup.Objects {
-		collisionObjects = append(collisionObjects, CollisionObject{
-			ID:       obj.ID,
-			Name:     obj.Name,
-			X:        obj.X,
-			Y:        obj.Y,
-			Type:     obj.Type,
-			Width:    obj.Width,
-			Height:   obj.Height,
-			Rotation: obj.Rotation,
-			Ellipe:   obj.Ellipe,
-			Polygon:  obj.Polygon,
-		})
+	for _, tileset := range tilemap.Tilesets {
+		if tileset.Parsed == nil {
+			continue
+		}
+		for _, tile := range tileset.Parsed.Tiles {
+			if tile.ObjectGroup != nil && len(tile.ObjectGroup.Objects) > 0 {
+				for _, obj := range tile.ObjectGroup.Objects {
+					allObjects = append(allObjects, ConverObject(obj))
+				}
+			}
+		}
 	}
-	return &ObjectGroup{Objects: collisionObjects}
+	if len(allObjects) == 0 {
+		fmt.Println("No colliders found")
+		return nil, nil
+	}
+
+	return &ObjectGroup{Objects: allObjects}, nil
+}
+
+func ConverObject(obj ObjectTiled) CollisionObject {
+	return CollisionObject{
+		ID:       obj.ID,
+		Name:     obj.Name,
+		X:        obj.X,
+		Y:        obj.Y,
+		Type:     obj.Type,
+		Width:    obj.Width,
+		Height:   obj.Height,
+		Rotation: obj.Rotation,
+		Ellipe:   obj.Ellipe,
+		Polygon:  converPoints(obj.Polygon),
+	}
+}
+
+func converPoints(in []PointTiled) []Point {
+	points := make([]Point, len(in))
+	for i, pt := range in {
+		points[i] = Point{X: pt.X, Y: pt.Y}
+	}
+	return points
 }

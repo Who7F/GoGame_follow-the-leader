@@ -18,7 +18,7 @@ type Game struct {
 	Player    *entities.Player
 	NPCs      []*entities.Npc
 	Rums      []*entities.Rum
-	Tilemap   *maps.TilemapJSON
+	Tilemap   *maps.TilemapTiled
 	Tilesets  []maps.TileProvider
 	Cam       *camera.Camera
 	Colliders []maps.ColliderProvider
@@ -51,10 +51,15 @@ func New() (*Game, error) {
 		log.Fatal(err)
 	}
 
-	colliders, err := tilemap.SetColliders(tilesets)
+	colliders, err := maps.SetColliders(tilemap)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//colliders, err := SConverObjectGroup(tilemap.Tilesets.)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	camera := camera.NewCamera(0, 0)
 

@@ -42,10 +42,10 @@
                 8
             ],
             "scale": 1,
-            "selectedLayer": 4,
+            "selectedLayer": 3,
             "viewCenter": {
-                "x": 800.5,
-                "y": 640.5
+                "x": 426,
+                "y": 348
             }
         },
         "tilesset/startbace2.json": {

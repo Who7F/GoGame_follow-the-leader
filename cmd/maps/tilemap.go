@@ -2,49 +2,37 @@ package maps
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
-type TilemapLayerJSON struct {
-	Data   []int  `json:"data"`
-	Width  int    `json:"width"`
-	Height int    `json:"height"`
-	Name   string `json:"name"`
-}
+const TilesetDir = "assets/maps/tilesset/"
 
-type TilesetInfo struct {
-	FirstGID int    `json:"firstgid"`
-	Source   string `json:"source"`
-}
-
-type ObjectJSON struct {
-	Type     string `json:"type"`
-	Width    int    `json:"width"`
-	Height   int    `json:"height"`
-	X        int    `json:"x"`
-	Y        int    `json:"y"`
-	Rotation int    `json:"rotation"`
-}
-
-type TilemapJSON struct {
-	Tilesets   []TilesetInfo      `json:"tilesets"`
-	Tiles      []TilemapLayerJSON `json:"layers"`
-	Object     []ObjectJSON       `json:"objects"`
-	TileWidth  int                `json:"tilewidth"`
-	TileHeight int                `json:"tileheight"`
-}
-
-func NewTilemapJSON(filepath string) (*TilemapJSON, error) {
+func NewTilemapJSON(filepath string) (*TilemapTiled, error) {
 	contents, err := os.ReadFile(filepath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find file %w", err)
 	}
 
-	tilemapJSON := TilemapJSON{}
-	err = json.Unmarshal(contents, &tilemapJSON)
+	tilemapTiled := TilemapTiled{}
+	err = json.Unmarshal(contents, &tilemapTiled)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load tilemap %w", err)
 	}
 
-	return &tilemapJSON, nil
+	for i, ts := range tilemapTiled.Tilesets {
+		tilesetPath := TilesetDir + ts.Source
+		data, err := os.ReadFile(tilesetPath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read tileset %s: %w", tilesetPath, err)
+		}
+		parsed := TilesetSourceTiled{}
+		err = json.Unmarshal(data, &parsed)
+		if err != nil {
+			return nil, fmt.Errorf("failed to unmarshal tileset %s: %w", tilesetPath, err)
+		}
+		tilemapTiled.Tilesets[i].Parsed = &parsed
+	}
+
+	return &tilemapTiled, nil
 }

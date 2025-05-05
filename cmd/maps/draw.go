@@ -8,7 +8,7 @@ import (
 )
 
 // whole map.
-func (t *TilemapJSON) Draw(screen *ebiten.Image, provider []TileProvider, cam *camera.Camera) {
+func (t *TilemapTiled) Draw(screen *ebiten.Image, provider []TileProvider, cam *camera.Camera) {
 	t.ForEachTile(provider, func(img *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
 		opts := &ebiten.DrawImageOptions{}
 		opts.GeoM.Translate(float64(x*t.TileWidth)+cam.X, float64((y*t.TileHeight)-img.Bounds().Dy()+t.TileHeight)+cam.Y)
@@ -28,7 +28,7 @@ type Colliders struct {
 	Polygon  []Point
 }
 
-func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]ColliderProvider, error) {
+func (t *TilemapTiled) SetColliders(providers []TileProvider) ([]ColliderProvider, error) {
 	colliders := []ColliderProvider{}
 
 	t.ForEachTile(providers, func(e *ebiten.Image, group *ObjectGroup, tileIndex, x, y int) {
@@ -95,7 +95,7 @@ func (t *TilemapJSON) SetColliders(providers []TileProvider) ([]ColliderProvider
 }
 
 // Look here Python. Here is how you do decorators without the garbage @ syntax
-func (t *TilemapJSON) ForEachTile(providers []TileProvider, fn func(image *ebiten.Image, group *ObjectGroup, tileIndex, x, y int)) {
+func (t *TilemapTiled) ForEachTile(providers []TileProvider, fn func(image *ebiten.Image, group *ObjectGroup, tileIndex, x, y int)) {
 	for layerIndex, layer := range t.Tiles {
 
 		provider := providers[layerIndex%len(providers)]
