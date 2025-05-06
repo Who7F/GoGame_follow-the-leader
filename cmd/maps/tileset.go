@@ -138,7 +138,7 @@ func SetTilesSize(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTiled, GI
 
 func SetImageCollection(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTiled, GID int) (*TileObj, error) {
 	images := make(map[int]*ebiten.Image)
-	groups := make(map[int]*ObjectGroup)
+	//groups := make(map[int]*ObjectGroup)
 
 	for _, collection := range tilesetData.Tiles {
 		path := filepath.Base(collection.Image)
@@ -155,9 +155,9 @@ func SetImageCollection(tilesetData *TilesetSourceTiled, tilesetInfo *TilesetTil
 
 	}
 	return &TileObj{
-		images:      images,
-		FirstGID:    GID,
-		ObjectGroup: groups,
+		images:   images,
+		FirstGID: GID,
+		//ObjectGroup: groups,
 	}, nil
 }
 
@@ -214,3 +214,58 @@ func converPoints(in []PointTiled) []Point {
 	}
 	return points
 }
+
+func ConvertToCollider(obj ObjectTiled, offsetX, offsetY float64, meta map[string]string) ColliderProvider {
+	worldX := offsetX + obj.X
+	worldY := offsetY + obj.Y
+
+	switch {
+	case obj.Ellipe:
+		return &CircleColliders{
+			X:      worldX + obj.Width/2,
+			Y:      worldY + obj.Height/2,
+			Layer:  0,
+			Type:   obj.Type,
+			Radius: obj.Width / 2, // Assuming circle width == height
+			Meta:   meta,
+		}
+	case len(obj.Polygon) > 0:
+		points := make([]Point, len(obj.Polygon))
+		for i, pt := range obj.Polygon {
+			points[i] = Point{
+				X: pt.X,
+				Y: pt.Y - obj.Height, // Adjust for origin if needed
+			}
+		}
+		return &PolygonColliders{
+			X:        worldX,
+			Y:        worldY,
+			Layer:    0,
+			Width:    obj.Width,
+			Height:   obj.Height,
+			Rotation: obj.Rotation,
+			Polygon:  points,
+			Type:     obj.Type,
+			Meta:     meta,
+		}
+	default:
+		return &RectColliders{
+			X:        worldX,
+			Y:        worldY,
+			Layer:    0,
+			Width:    obj.Width,
+			Height:   obj.Height,
+			Rotation: obj.Rotation,
+			Type:     obj.Type,
+			Meta:     meta,
+		}
+	}
+}
+
+//points := make([]Point, len(obj.Polygon))
+//	for i, pt := range obj.Polygon {
+//		points[i] = Point{
+//			X: pt.X,
+//			Y: pt.Y - float64(e.Bounds().Dy()),
+//		}
+//	}

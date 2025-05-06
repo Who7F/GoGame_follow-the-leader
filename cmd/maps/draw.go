@@ -70,10 +70,9 @@ func (t *TilemapTiled) SetColliders(providers []TileProvider) ([]ColliderProvide
 					Width:    obj.Width,
 					Height:   obj.Height,
 					Rotation: obj.Rotation,
-					//Polygon:  obj.Polygon,
-					Polygon: points,
-					Type:    obj.Type,
-					Meta:    meta,
+					Polygon:  points,
+					Type:     obj.Type,
+					Meta:     meta,
 				})
 			default:
 				colliders = append(colliders, &RectColliders{
