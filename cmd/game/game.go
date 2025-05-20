@@ -90,8 +90,8 @@ func (g *Game) Update() error {
 	screenWidth, screenHeight := 640.0, 480.0
 	offset := 8.0
 
-	tilemapWidth := float64(g.Tilemap.Tiles[0].Width) * 16.0
-	tilemapHeight := float64(g.Tilemap.Tiles[0].Height) * 16.0
+	tilemapWidth := float64(g.Tilemap.Layers[0].Width) * 16.0
+	tilemapHeight := float64(g.Tilemap.Layers[0].Height) * 16.0
 
 	g.Cam.FollowTarget(g.Player.X+offset, g.Player.Y+offset, screenWidth, screenHeight)
 	g.Cam.Constrain(tilemapWidth, tilemapHeight, screenWidth, screenHeight)
@@ -116,13 +116,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for _, rum := range g.Rums {
 		rum.Draw(screen, g.Cam)
 	}
-
-	colliderDebug := true
-	if colliderDebug {
-		for _, collider := range g.Colliders {
-			collider.Draw(screen, g.Cam)
+	/*
+		colliderDebug := true
+		if colliderDebug {
+			for _, collider := range g.Colliders {
+				collider.Draw(screen, g.Cam)
+			}
 		}
-	}
+	*/
 
 	g.Player.Anim.Draw(screen, g.Cam, g.Player.X, g.Player.Y)
 

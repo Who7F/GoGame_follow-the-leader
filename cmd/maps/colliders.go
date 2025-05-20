@@ -134,3 +134,58 @@ func clamp(value, min, max float64) float64 {
 	}
 	return value
 }
+
+func ConvertToCollider(obj ObjectTiled, offsetX, offsetY float64, meta map[string]string) ColliderProvider {
+	worldX := offsetX + obj.X
+	worldY := offsetY + obj.Y
+
+	switch {
+	case obj.Ellipe:
+		return &CircleColliders{
+			X:      worldX + obj.Width/2,
+			Y:      worldY + obj.Height/2,
+			Layer:  0,
+			Type:   obj.Type,
+			Radius: obj.Width / 2, // Assuming circle width == height
+			Meta:   meta,
+		}
+	case len(obj.Polygon) > 0:
+		points := make([]Point, len(obj.Polygon))
+		for i, pt := range obj.Polygon {
+			points[i] = Point{
+				X: pt.X,
+				Y: pt.Y - obj.Height, // Adjust for origin if needed
+			}
+		}
+		return &PolygonColliders{
+			X:        worldX,
+			Y:        worldY,
+			Layer:    0,
+			Width:    obj.Width,
+			Height:   obj.Height,
+			Rotation: obj.Rotation,
+			Polygon:  points,
+			Type:     obj.Type,
+			Meta:     meta,
+		}
+	default:
+		return &RectColliders{
+			X:        worldX,
+			Y:        worldY,
+			Layer:    0,
+			Width:    obj.Width,
+			Height:   obj.Height,
+			Rotation: obj.Rotation,
+			Type:     obj.Type,
+			Meta:     meta,
+		}
+	}
+}
+
+func converPoints(in []PointTiled) []Point {
+	points := make([]Point, len(in))
+	for i, pt := range in {
+		points[i] = Point{X: pt.X, Y: pt.Y}
+	}
+	return points
+}

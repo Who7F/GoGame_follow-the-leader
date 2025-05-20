@@ -24,7 +24,7 @@ type TilesetTiled struct {
 
 type TilemapTiled struct {
 	Tilesets   []TilesetTiled `json:"tilesets"`
-	Tiles      []LayerTiled   `json:"layers"`
+	Layers     []LayerTiled   `json:"layers"`
 	TileWidth  int            `json:"tilewidth"`
 	TileHeight int            `json:"tileheight"`
 	Width      int            `json:"width"`
@@ -40,7 +40,7 @@ type TilesetSourceTiled struct {
 	Margin      int         `json:"margin"`
 	Name        string      `json:"name"`
 	Spacing     int         `json:"spacing"`
-	TileConnt   int         `json:"tilecount"`
+	TileCount   int         `json:"tilecount"`
 	TileHeight  int         `json:"tileheight"`
 	TileWidth   int         `json:"tilewidth"`
 	Type        string      `json:"tileset"`
@@ -77,4 +77,18 @@ type ObjectTiled struct {
 type PointTiled struct {
 	X float64 `json:"x"`
 	Y float64 `json:"y"`
+}
+
+func (t TilesetTiled) GetParsed() (*TilesetSourceTiled, bool) {
+	if t.Parsed == nil {
+		return nil, false
+	}
+	return t.Parsed, true
+}
+
+func (t TileTiled) GetObjectGroup() (*ObjectGroupTiled, bool) {
+	if t.ObjectGroup == nil {
+		return nil, false
+	}
+	return t.ObjectGroup, true
 }
