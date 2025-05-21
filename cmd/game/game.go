@@ -116,14 +116,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	for _, rum := range g.Rums {
 		rum.Draw(screen, g.Cam)
 	}
-	/*
-		colliderDebug := true
-		if colliderDebug {
-			for _, collider := range g.Colliders {
-				collider.Draw(screen, g.Cam)
-			}
+
+	colliderDebug := true
+	if colliderDebug {
+		for _, collider := range g.Colliders {
+			collider.Draw(screen, g.Cam)
 		}
-	*/
+	}
 
 	g.Player.Anim.Draw(screen, g.Cam, g.Player.X, g.Player.Y)
 

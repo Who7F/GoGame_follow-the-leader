@@ -44,12 +44,12 @@ type TilesetSourceTiled struct {
 	TileHeight  int         `json:"tileheight"`
 	TileWidth   int         `json:"tilewidth"`
 	Type        string      `json:"tileset"`
-	Tiles       []TileTiled `json:"tiles,eomitempty"`
+	Tiles       []TileTiled `json:"tiles,omitempty"`
 }
 
 type TileTiled struct {
 	ID          int    `json:"id"`
-	Image       string `json:"image,eomitempty"`
+	Image       string `json:"image,omitempty"`
 	ImageWidth  int    `json:"imagewidth"`
 	ImageHeight int    `json:"imageheight"`
 	ObjectGroup *ObjectGroupTiled
